@@ -86,7 +86,7 @@ export function InteractivePart({
     if (animating) invalidate();
   });
   const over = (event: ThreeEvent<PointerEvent>) => {
-    if (preview || (xray && part.geometry === 'case')) return;
+    if (hidden || preview || (xray && part.geometry === 'case')) return;
     event.stopPropagation();
     setHovered(true);
     document.body.style.cursor = 'pointer';
@@ -103,7 +103,7 @@ export function InteractivePart({
         document.body.style.cursor = '';
       }}
       onClick={(event) => {
-        if (preview || (xray && part.geometry === 'case')) return;
+        if (hidden || preview || (xray && part.geometry === 'case')) return;
         event.stopPropagation();
         if (event.delta < 5) onSelect(part.id);
       }}

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://cpe-atlas.upbeat-skink-7967.chatgpt.site'),
+  metadataBase: new URL('https://cpe-atlas.rvintite.chatgpt.site'),
   title: 'CpE Atlas — Interactive Computer Engineering',
   description:
     'Explore computers, motherboards, microcontrollers, and circuits in 3D. Take systems apart and discover how every component works.',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://cpe-atlas.upbeat-skink-7967.chatgpt.site/og.png',
+        url: 'https://cpe-atlas.rvintite.chatgpt.site/og.png',
         width: 1729,
         height: 910,
         alt: 'CpE Atlas — Explore Computer Engineering from the inside out.',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'CpE Atlas',
     description: 'Explore Computer Engineering from the inside out.',
-    images: ['https://cpe-atlas.upbeat-skink-7967.chatgpt.site/og.png'],
+    images: ['https://cpe-atlas.rvintite.chatgpt.site/og.png'],
   },
 };
 
