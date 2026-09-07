@@ -5,7 +5,6 @@ import {
   useReducedMotion,
 } from '@/hooks/use-browser-preferences';
 import { Canvas } from '@react-three/fiber';
-import { RectifierConnections } from './RectifierConnections';
 import { LoaderCircle, MonitorX } from 'lucide-react';
 import { systems } from '@/lib/atlas/systems';
 import { useAtlas } from '@/lib/atlas/store';
@@ -96,10 +95,7 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
             preview={preview}
             reducedMotion={reducedMotion}
           />
-          {system.id === 'rectifier' && exploded < 0.01 && !state.isolated && (
-            <RectifierConnections />
-          )}
-          {!preview && (
+          {!preview && exploded === 0 && (
             <>
               <gridHelper
                 args={[22, 44, '#293540', '#202831']}

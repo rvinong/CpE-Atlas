@@ -17,10 +17,7 @@ export function AtlasModel({
   const system = systems[preview ? 'desktop' : state.systemId];
   const aspect = useThree((s) => s.size.width / Math.max(1, s.size.height));
   const layout = useMemo(
-    () =>
-      system.id === 'desktop'
-        ? createDisplayLayout(system.parts, aspect)
-        : undefined,
+    () => createDisplayLayout(system.parts, aspect),
     [system, aspect],
   );
   const exploded = preview ? 0 : state.exploded;

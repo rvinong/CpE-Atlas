@@ -44,6 +44,7 @@ export function AtlasToolbar() {
             !state.exploded && !state.xray && !state.learn ? 'active' : ''
           }
           onClick={() => {
+            state.select(null);
             state.setExploded(0);
             if (state.xray) state.toggleXray();
             if (state.learn) state.toggleLearn();

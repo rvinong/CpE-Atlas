@@ -37,11 +37,13 @@ export interface AtlasPart {
   explodedPosition: Vec3;
   cameraTarget: Vec3;
   size: Vec3;
+  /** Centered presentation envelope including attached markings and hardware. */
+  visualSize?: Vec3;
   color: string;
   geometry: GeometryKind;
   lesson: string;
   rotation?: Vec3;
-  detail?: 'desktop';
+  detail?: SystemId;
   displayRotation?: Vec3;
   clearancePosition?: Vec3;
   dimensionsMm?: string;

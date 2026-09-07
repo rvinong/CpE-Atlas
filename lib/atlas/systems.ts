@@ -5,6 +5,7 @@ import type {
   SystemId,
   Vec3,
 } from './types';
+import { applyComponentDimensions } from './component-dimensions';
 
 function part(
   id: string,
@@ -310,8 +311,20 @@ const desktopDimensions: Record<
     dimensionsMm: '120 × 120 × 25 mm exhaust',
   },
 };
+const desktopVisualSizes: Record<string, Vec3> = {
+  case: [4.5, 4.9, 2.25],
+  motherboard: [2.44, 3.05, 0.35],
+  cpu: [0.4, 0.4, 0.065],
+  cooler: [1.3, 1.25, 1.55],
+  gpu: [2.88, 0.5, 1.31],
+  psu: [1.46, 1.01, 1.53],
+  ssd: [0.6985, 1, 0.105],
+  fans: [1.225, 3.725, 0.3],
+  'rear-fan': [1.225, 1.225, 0.3],
+};
 for (const p of desktop) {
   Object.assign(p, desktopDimensions[p.id], { detail: 'desktop' });
+  p.visualSize = desktopVisualSizes[p.id] ?? p.size;
   p.cameraTarget = p.position;
   p.specifications['Model dimensions'] = p.dimensionsMm!;
 }
@@ -708,6 +721,69 @@ const rectifier: AtlasPart[] = [
   ),
 ];
 
+motherboard.push(
+  mb(
+    'rear-io',
+    'Rear I/O',
+    'port',
+    [0, 0, 0],
+    [1, 1, 1],
+    'Shielded connectors expose USB, networking, video and audio interfaces at the back of the computer.',
+    { Interfaces: 'USB, Ethernet, video, audio' },
+    ['ethernet', 'audio', 'chipset'],
+    'Connector shields help with grounding and interference. Available ports depend on the board and processor.',
+  ),
+);
+arduino.push(
+  mb(
+    'dc-jack',
+    'DC Power Jack',
+    'port',
+    [0, 0, 0],
+    [1, 1, 1],
+    'The barrel jack accepts an external DC supply for the onboard regulator.',
+    { Connector: 'Center-positive barrel jack' },
+    ['regulator', 'power-caps'],
+    'The input passes through the board power circuitry before supplying the regulated logic rail.',
+  ),
+  mb(
+    'power-caps',
+    'Power Capacitors',
+    'capacitor',
+    [0, 0, 0],
+    [1, 1, 1],
+    'Electrolytic capacitors smooth the input and regulated power rails.',
+    { Type: 'Polarized electrolytic' },
+    ['dc-jack', 'regulator'],
+    'Bulk capacitors store charge to reduce supply changes. Smaller nearby capacitors handle faster transients.',
+  ),
+);
+rectifier.unshift(
+  mb(
+    'pcb',
+    'Circuit Board',
+    'board',
+    [0, 0, 0],
+    [1, 1, 1],
+    'An example printed circuit board supports the components and connects the bridge and output network.',
+    { Layout: 'Full-wave bridge with parallel filter and load' },
+    ['d1', 'd2', 'd3', 'd4', 'capacitor', 'load'],
+    'AC enters the two side nodes of the bridge. The top and bottom nodes supply positive and negative DC to the capacitor and load.',
+    '#315d4d',
+  ),
+);
+const acTerminal = rectifier.find((p) => p.id === 'ac')!;
+acTerminal.name = 'AC Input';
+acTerminal.fullName = 'Low-voltage AC input terminal';
+acTerminal.description =
+  'A two-pole screw terminal connects an external low-voltage AC source to the bridge.';
+for (const [id, parts] of [
+  ['motherboard', motherboard],
+  ['arduino', arduino],
+  ['rectifier', rectifier],
+] as const)
+  applyComponentDimensions(parts, id);
+
 export const systems: Record<SystemId, AtlasSystem> = {
   desktop: {
     id: 'desktop',
@@ -733,9 +809,9 @@ export const systems: Record<SystemId, AtlasSystem> = {
     number: '02',
     description: 'The architecture of connection.',
     parts: motherboard,
-    camera: [3, 2, 8.5],
+    camera: [-2.5, 1.8, 6.5],
     overview:
-      'Explore the sockets, expansion interfaces, power circuitry, and controllers on a conceptual motherboard.',
+      'Explore an ATX-sized motherboard with detailed sockets, expansion interfaces, power circuitry, and controllers. Explode to compare every component side by side.',
     features: { xray: false, signal: false, pins: false },
     connections: [
       { from: 'socket', to: 'dimm', kind: 'data' },
@@ -749,7 +825,7 @@ export const systems: Record<SystemId, AtlasSystem> = {
     number: '03',
     description: 'An introduction to physical computing.',
     parts: arduino,
-    camera: [2.3, 2.6, 7],
+    camera: [-2.3, 2.6, 7],
     overview:
       'Inspect an Uno R3-inspired board and learn how its controller, programming interface, power, and I/O work together. Pin groups are selectable; individual pin mode is coming later.',
     features: { xray: false, signal: false, pins: false },
@@ -767,7 +843,7 @@ export const systems: Record<SystemId, AtlasSystem> = {
     parts: rectifier,
     camera: [2, 2, 9],
     overview:
-      'Inspect four diodes, a source, a filter capacitor, and a load. The exploded arrangement is a teaching model; electrical waveforms and animated half-cycle paths are planned.',
+      'Explore a physical bridge circuit with four axial diodes, an AC input, a filter capacitor, and a load. Explode to inspect each part. Waveforms and animated half-cycle paths are planned.',
     features: { xray: false, signal: false, pins: false },
     connections: [
       { from: 'ac', to: 'd1', kind: 'signal' },

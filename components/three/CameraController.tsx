@@ -1,10 +1,11 @@
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useMemo, useRef, type RefObject } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { Vector3 } from 'three';
 import type { AtlasSystem } from '@/lib/atlas/types';
 import {
+  assemblyDistance,
   displayDistance,
   displayProgress,
   partPosition,
@@ -36,17 +37,24 @@ export function CameraController({
   const target = useRef(new Vector3());
   const aspect = useThree((s) => s.size.width / Math.max(1, s.size.height));
   const invalidate = useThree((s) => s.invalidate);
+  const assembledView = useMemo(() => {
+    const view = new Vector3(...system.camera);
+    return view
+      .normalize()
+      .multiplyScalar(
+        Math.max(
+          new Vector3(...system.camera).length(),
+          assemblyDistance(system.parts, system.camera, aspect),
+        ),
+      );
+  }, [system, aspect]);
   useEffect(() => {
     const part = system.parts.find((p) => p.id === selectedId);
-    const framing = Math.max(
-      1,
-      (system.id === 'rectifier' ? 1.25 : 0.8) / aspect,
-    );
     if (part) {
       target.current.set(...partPosition(part, exploded, layout?.[part.id]));
       const distance =
         Math.max(
-          1.6,
+          0.36,
           Math.max(
             ...(layout && exploded > 0.5 ? layout[part.id].size : part.size),
           ) * 2.1,
@@ -67,11 +75,9 @@ export function CameraController({
     } else {
       target.current.set(0, 0, 0);
       goal.current
-        .set(...system.camera)
+        .copy(assembledView)
         .multiplyScalar(
-          (1 +
-            (layout ? Math.min(exploded / 0.28, 1) * 0.18 : exploded * 0.33)) *
-            framing,
+          1 + (layout ? Math.min(exploded / 0.28, 1) * 0.18 : exploded * 0.33),
         );
       if (layout)
         goal.current.lerp(
@@ -81,16 +87,23 @@ export function CameraController({
     }
     moving.current = true;
     invalidate();
-  }, [system, selectedId, exploded, resetKey, aspect, layout, invalidate]);
+  }, [
+    system,
+    selectedId,
+    exploded,
+    resetKey,
+    aspect,
+    layout,
+    invalidate,
+    assembledView,
+  ]);
   useFrame(({ camera }, dt) => {
     if (!moving.current || !controls.current) return;
     if (layout && progress && !selectedId) {
       const amount = progress.current;
       goal.current
-        .set(...system.camera)
-        .multiplyScalar(
-          (1 + Math.min(amount / 0.28, 1) * 0.18) * Math.max(1, 0.8 / aspect),
-        );
+        .copy(assembledView)
+        .multiplyScalar(1 + Math.min(amount / 0.28, 1) * 0.18);
       goal.current.lerp(
         new Vector3(0, 0, displayDistance(layout, aspect)),
         displayProgress(amount),
@@ -115,7 +128,7 @@ export function CameraController({
       enableDamping
       dampingFactor={0.09}
       enablePan={false}
-      minDistance={0.8}
+      minDistance={0.25}
       maxDistance={
         layout ? Math.max(35, displayDistance(layout, aspect) * 1.6) : 35
       }

@@ -1,8 +1,10 @@
 import type { AtlasPart } from '@/lib/atlas/types';
 import { Block, Disc, Fan, Board } from './GeometryPrimitives';
 import { DesktopGeometry } from './DesktopGeometry';
+import { ElectronicsGeometry } from './ElectronicsGeometry';
 export function PartGeometry({ part: p }: { part: AtlasPart }) {
   if (p.detail === 'desktop') return <DesktopGeometry part={p} />;
+  if (p.detail) return <ElectronicsGeometry part={p} />;
   const [w, h, d] = p.size;
   switch (p.geometry) {
     case 'case':

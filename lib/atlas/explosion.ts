@@ -1,4 +1,4 @@
-import { Euler, Matrix4 } from 'three';
+import { Euler, Matrix4, Vector3 } from 'three';
 import type { AtlasPart, Vec3 } from './types';
 
 export interface DisplaySlot {
@@ -46,7 +46,10 @@ export function createDisplayLayout(
 ): Record<string, DisplaySlot> {
   const items = parts.map((part) => ({
     part,
-    size: rotatedSize(part.size, part.displayRotation ?? [0, 0, 0]),
+    size: rotatedSize(
+      part.visualSize ?? part.size,
+      part.displayRotation ?? [0, 0, 0],
+    ),
   }));
   const area = items.reduce(
     (sum, item) =>
@@ -116,4 +119,41 @@ export function displayDistance(
       s[2] / 2 + (Math.abs(p[1]) + s[1] / 2 + 0.7) / tan,
     );
   return distance * 1.12;
+}
+
+/** Fit the assembly from its authored viewing direction, including depth. */
+export function assemblyDistance(
+  parts: AtlasPart[],
+  direction: Vec3,
+  aspect: number,
+  fov = 38,
+) {
+  const eye = new Vector3(...direction).normalize();
+  const right = new Vector3()
+    .crossVectors(new Vector3(0, 1, 0), eye)
+    .normalize();
+  const up = new Vector3().crossVectors(eye, right);
+  const tan = Math.tan((fov * Math.PI) / 360);
+  let distance = 0;
+  for (const part of parts) {
+    const size = rotatedSize(
+      part.visualSize ?? part.size,
+      part.rotation ?? [0, 0, 0],
+    );
+    for (const x of [-1, 1])
+      for (const y of [-1, 1])
+        for (const z of [-1, 1]) {
+          const corner = new Vector3(
+            part.position[0] + (x * size[0]) / 2,
+            part.position[1] + (y * size[1]) / 2,
+            part.position[2] + (z * size[2]) / 2,
+          );
+          distance = Math.max(
+            distance,
+            corner.dot(eye) + Math.abs(corner.dot(right)) / (tan * aspect),
+            corner.dot(eye) + Math.abs(corner.dot(up)) / tan,
+          );
+        }
+  }
+  return distance * 1.15;
 }

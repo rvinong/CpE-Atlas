@@ -1,23 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import ts from 'typescript';
-async function loadTs(relative) {
-  const source = fs.readFileSync(new URL(relative, import.meta.url), 'utf8');
-  const compiled = ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ES2022,
-    },
-  }).outputText;
-  const resolved = compiled.replace(
-    "from 'zustand'",
-    `from '${import.meta.resolve('zustand')}'`,
-  );
-  return import(
-    `data:text/javascript;base64,${Buffer.from(resolved).toString('base64')}`
-  );
-}
+import { loadSource as loadTs } from './source-loader.mjs';
 const { systems, isSystemId } = await loadTs('../lib/atlas/systems.ts');
 const { useAtlas } = await loadTs('../lib/atlas/store.ts');
 test('Every selectable part has valid geometry, education, and resolvable relationships', () => {

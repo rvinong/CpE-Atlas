@@ -33,26 +33,26 @@ npm run build
 
 ## Architecture
 
-| Location                                    | Responsibility                                                              |
-| ------------------------------------------- | --------------------------------------------------------------------------- |
-| `app/page.tsx`                              | Landing page                                                                |
-| `app/atlas/page.tsx`                        | Atlas route                                                                 |
-| `components/atlas/`                         | Workspace, sidebar, inspector, viewing toolbar                              |
-| `components/three/AtlasScene.tsx`           | Lazy-loaded Canvas, lights, composition, fallbacks                          |
-| `components/three/InteractivePart.tsx`      | Hit testing, highlighting, opacity, labels, exploded-position interpolation |
-| `components/three/PartGeometry.tsx`         | Replaceable original procedural geometry                                    |
-| `components/three/CameraController.tsx`     | Orbit controls and eased focus/reset                                        |
-| `components/three/RectifierConnections.tsx` | Static bridge wiring and polarity labels                                    |
-| `lib/atlas/types.ts`                        | Typed model/educational contract                                            |
-| `lib/atlas/systems.ts`                      | System registry, parts, future connection graph                             |
-| `lib/atlas/store.ts`                        | Shared interaction state and transitions                                    |
-| `tests/atlas-data.test.mjs`                 | Graph/data integrity and cross-mode regression checks                       |
+| Location                                   | Responsibility                                                              |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| `app/page.tsx`                             | Landing page                                                                |
+| `app/atlas/page.tsx`                       | Atlas route                                                                 |
+| `components/atlas/`                        | Workspace, sidebar, inspector, viewing toolbar                              |
+| `components/three/AtlasScene.tsx`          | Lazy-loaded Canvas, lights, composition, fallbacks                          |
+| `components/three/InteractivePart.tsx`     | Hit testing, highlighting, opacity, labels, exploded-position interpolation |
+| `components/three/PartGeometry.tsx`        | Replaceable original procedural geometry                                    |
+| `components/three/CameraController.tsx`    | Orbit controls and eased focus/reset                                        |
+| `components/three/ElectronicsGeometry.tsx` | Physical board components, copper tracks, and polarity markings             |
+| `lib/atlas/types.ts`                       | Typed model/educational contract                                            |
+| `lib/atlas/systems.ts`                     | System registry, parts, future connection graph                             |
+| `lib/atlas/store.ts`                       | Shared interaction state and transitions                                    |
+| `tests/atlas-data.test.mjs`                | Graph/data integrity and cross-mode regression checks                       |
 
 Animations run inside the render loop without React state updates per frame. Pixel ratio is capped at 1.5; shadow resolution at 1024. No remote texture/environment assets are required. The large Three.js bundle is loaded asynchronously. Zustand provides one shared state store; no duplicate animation or state library was added.
 
 ## Model assets and expansion
 
-All geometry is original and simplified. The desktop uses a consistent scale of **one scene unit = 100 mm**, anchored to a 305 × 244 mm ATX board. Other modules remain conceptual and not to scale. The social image is generated artwork and is not a screenshot of the viewer. No commercial model is copied or bundled.
+All geometry is original and simplified. Desktop and motherboard use **one scene unit = 100 mm**, anchored to a 305 × 244 mm ATX board. Arduino uses 20 mm per unit and the bridge circuit uses 10 mm per unit, keeping all component sizes consistent within each system. Each module is framed independently. The social image is generated artwork and is not a screenshot of the viewer. No commercial model is copied or bundled.
 
 Place licensed, optimized model files under `public/models/`. Keep geometry behind `PartGeometry`/`InteractivePart` so replacement does not change selection, educational data, or UI. See `public/models/README.md` for the asset contract.
 
@@ -61,8 +61,8 @@ Add modules through `AtlasSystem` and the registry. Component IDs are scoped to 
 ## Deliberate MVP boundaries
 
 - Signal flow, electrical waveforms, and individual Arduino pin interaction are upcoming. Pin _groups_ are selectable; the interface does not pretend to simulate a circuit.
-- The bridge uses a conventional diamond: AC enters the left/right nodes; positive DC is the top node, negative DC is the bottom. Capacitor and load are parallel across the output. D1/D4 and D2/D3 are the alternate conducting pairs. Explode hides the wiring because separated positions no longer represent a connected circuit.
-- The desktop uses representative physical dimensions and compatible mounting positions; it is not a manufacturer-specific product or manufacturing CAD model. The standalone motherboard retains conceptual proportions. No engineering tolerances, benchmark specifications, or electrical simulation accuracy are claimed.
+- The bridge uses a conventional diamond: AC enters the left/right nodes; positive DC is the top node, negative DC is the bottom. Capacitor and load are parallel across the output. D1/D4 and D2/D3 are the alternate conducting pairs. Copper tracks and output polarity markings stay attached to the PCB during explosion; separated parts no longer represent a connected circuit.
+- All systems use representative physical dimensions and mounting positions. They are not manufacturer-specific manufacturing CAD models. No engineering tolerances, benchmark specifications, or electrical simulation accuracy are claimed.
 - No accounts, persistent learning progress, or backend database were requested.
 
 ## Reference interpretation
@@ -86,3 +86,11 @@ The desktop uses a single coordinate convention: X rear-to-front, Y up, Z from t
 The exploded canvas reserves space for the heading and separation controls. On mobile the overview inspector collapses to give the model more room, then expands when a part is selected. Captions scale with the viewport to avoid covering adjacent components.
 
 Regression checks evaluate the actual React geometry tree, including nested transforms. They verify that hardware fits inside the case, that exploded mesh bounds do not overlap in the default perspective projection across six viewport aspect ratios, and that the staged trajectory has continuous endpoints. These are geometry checks, not a claim of browser visual QA or manufacturing tolerances.
+
+## All-system component revision
+
+`component-dimensions.ts` describes physical envelopes, assembly positions, and extraction waypoints for the standalone motherboard, Uno, and bridge circuit. `visualSize` includes small attached details in presentation bounds without altering the underlying component dimensions. All modules now use the shared staged explosion, responsive rows, automatic captions, focus, and camera fitting. Small chips retain their actual relative size; selecting one zooms in for inspection.
+
+The motherboard includes four DIMM sockets, socket contacts and retention lever, PCIe connectors, regulator bank, finned chipset heatsink, coin-cell holder, M.2 connector/standoff, and rear I/O. The Uno includes a socketed 28-pin controller, USB Type-B shell, female headers, ICSP pins, power jack and capacitors. Its board outline uses the [official Uno Rev3 dimensions](https://store.arduino.cc/products/arduino-uno-rev3). The bridge uses axial diode bodies with cathode bands, formed leads, an electrolytic capacitor with vent and polarity stripe, a banded resistor, and an input screw terminal. The diode envelope follows the [Vishay DO-41 reference](https://www.vishay.com/docs/88503/1n4001.pdf); remaining envelopes are representative examples.
+
+Tests cover the actual geometry envelopes and perspective projection for all four systems, plus PCB mounting clearances and continuous assembly/explosion endpoints. PCB copper routing is illustrative, and the models remain educational rather than circuit fabrication files.
