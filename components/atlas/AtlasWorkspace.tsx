@@ -76,7 +76,10 @@ export default function AtlasWorkspace() {
     }
   };
   return (
-    <div className="atlas-app" ref={root}>
+    <div
+      className={`atlas-app ${system.id === 'desktop' && state.exploded > 0 ? 'catalog-view' : ''}`}
+      ref={root}
+    >
       <AtlasSidebar
         open={navOpen}
         onClose={() => setNavOpen(false)}

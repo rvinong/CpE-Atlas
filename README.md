@@ -52,7 +52,7 @@ Animations run inside the render loop without React state updates per frame. Pix
 
 ## Model assets and expansion
 
-All current geometry is original, simplified, and explicitly marked **not to scale**. The social image is generated artwork and is not a screenshot of the viewer. No commercial model is copied or bundled.
+All geometry is original and simplified. The desktop uses a consistent scale of **one scene unit = 100 mm**, anchored to a 305 × 244 mm ATX board. Other modules remain conceptual and not to scale. The social image is generated artwork and is not a screenshot of the viewer. No commercial model is copied or bundled.
 
 Place licensed, optimized model files under `public/models/`. Keep geometry behind `PartGeometry`/`InteractivePart` so replacement does not change selection, educational data, or UI. See `public/models/README.md` for the asset contract.
 
@@ -62,7 +62,7 @@ Add modules through `AtlasSystem` and the registry. Component IDs are scoped to 
 
 - Signal flow, electrical waveforms, and individual Arduino pin interaction are upcoming. Pin _groups_ are selectable; the interface does not pretend to simulate a circuit.
 - The bridge uses a conventional diamond: AC enters the left/right nodes; positive DC is the top node, negative DC is the bottom. Capacitor and load are parallel across the output. D1/D4 and D2/D3 are the alternate conducting pairs. Explode hides the wiring because separated positions no longer represent a connected circuit.
-- The PC layout and motherboard use generic proportions, not a manufacturer-specific design. No engineering tolerances, benchmark specifications, or electrical simulation accuracy are claimed.
+- The desktop uses representative physical dimensions and compatible mounting positions; it is not a manufacturer-specific product or manufacturing CAD model. The standalone motherboard retains conceptual proportions. No engineering tolerances, benchmark specifications, or electrical simulation accuracy are claimed.
 - No accounts, persistent learning progress, or backend database were requested.
 
 ## Reference interpretation
@@ -74,3 +74,15 @@ Arduino terminology was checked against the [official Uno R3 overview](https://d
 ## Verification limits
 
 Automated checks cover type correctness, production compilation, data integrity, state transitions, and HTTP route responses. The in-app browser was unavailable in the development session, so visual WebGL rendering, touch gestures, and browser interaction should receive a device QA pass before classroom use.
+
+## Desktop model revision
+
+The desktop uses a single coordinate convention: X rear-to-front, Y up, Z from the motherboard tray toward the open side. `desktopDimensions` in the system registry controls physical envelopes, mounting origins, extraction waypoints, and presentation rotations. The ATX reference dimensions are checked against [ASUS specifications](https://www.asus.com/motherboards-components/motherboards/prime/prime-b760-plus-d4/techspec/); the CPU, GPU, cooler, case, and storage are representative compatible sizes, not replicas of a particular product.
+
+`DesktopGeometry` supplies the detailed chassis, socket, DIMM connectors, GPU PCB/heatsink/fans, CPU contact pads, cooler fins, PSU sockets, SSD, and correctly oriented intake/exhaust assemblies. `GeometryPrimitives` is shared with the other modules.
+
+`explosion.ts` packs rotated component bounds into responsive rows, reserving caption space. Full-size relationships are preserved: small parts are intentionally small and can be selected to focus. A shared render-loop progress value first extracts parts to clearance positions (0–28%), then moves and rotates them into the catalogue (28–100%). Toggle and slider actions use the same reversible path. The camera follows this progress into a front-facing view and fits the complete layout. Camera gestures still allow manual inspection.
+
+The exploded canvas reserves space for the heading and separation controls. On mobile the overview inspector collapses to give the model more room, then expands when a part is selected. Captions scale with the viewport to avoid covering adjacent components.
+
+Regression checks evaluate the actual React geometry tree, including nested transforms. They verify that hardware fits inside the case, that exploded mesh bounds do not overlap in the default perspective projection across six viewport aspect ratios, and that the staged trajectory has continuous endpoints. These are geometry checks, not a claim of browser visual QA or manufacturing tolerances.

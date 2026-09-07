@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { Component, Suspense, type ReactNode } from 'react';
 import {
   useBrowserReady,
@@ -9,8 +9,7 @@ import { RectifierConnections } from './RectifierConnections';
 import { LoaderCircle, MonitorX } from 'lucide-react';
 import { systems } from '@/lib/atlas/systems';
 import { useAtlas } from '@/lib/atlas/store';
-import { InteractivePart } from './InteractivePart';
-import { CameraController } from './CameraController';
+import { AtlasModel } from './AtlasModel';
 
 class SceneBoundary extends Component<
   { children: ReactNode },
@@ -48,8 +47,8 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
   const system = systems[preview ? 'desktop' : state.systemId];
   const ready = useBrowserReady();
   const reducedMotion = useReducedMotion();
-  const exploded = preview ? 0.28 : state.exploded;
-  const selectedId = preview ? null : state.selectedId;
+  const exploded = preview ? 0 : state.exploded;
+
   if (!ready) return <SceneLoading />;
   return (
     <SceneBoundary>
@@ -58,7 +57,7 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
           frameloop="demand"
           camera={{ position: system.camera, fov: 38, near: 0.1, far: 100 }}
           dpr={[1, 1.5]}
-          shadows
+          shadows="percentage"
           gl={{
             antialias: true,
             alpha: true,
@@ -92,23 +91,11 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
             color="#8eafd5"
           />
           <directionalLight position={[0, -2, 5]} intensity={0.7} />
-          <group>
-            {system.parts.map((part) => (
-              <InteractivePart
-                key={`${system.id}-${part.id}`}
-                part={part}
-                selected={selectedId === part.id}
-                dimmed={!!selectedId && selectedId !== part.id}
-                hidden={!preview && state.isolated && selectedId !== part.id}
-                exploded={exploded}
-                xray={preview || state.xray}
-                labels={!preview && state.labels}
-                onSelect={state.select}
-                reducedMotion={reducedMotion}
-                preview={preview}
-              />
-            ))}
-          </group>
+          <AtlasModel
+            key={system.id}
+            preview={preview}
+            reducedMotion={reducedMotion}
+          />
           {system.id === 'rectifier' && exploded < 0.01 && !state.isolated && (
             <RectifierConnections />
           )}
@@ -128,14 +115,6 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
               </mesh>
             </>
           )}
-          <CameraController
-            system={system}
-            selectedId={selectedId}
-            exploded={exploded}
-            resetKey={state.resetKey}
-            reducedMotion={reducedMotion}
-            preview={preview}
-          />
         </Canvas>
       </Suspense>
     </SceneBoundary>

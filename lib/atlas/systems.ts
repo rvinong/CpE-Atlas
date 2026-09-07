@@ -225,6 +225,97 @@ const desktop: AtlasPart[] = [
     [1.3, 2.25, -2.35],
   ),
 ];
+// One scene unit = 100 mm. X runs rear-to-front, Y up, Z out from the tray.
+const desktopDimensions: Record<
+  string,
+  {
+    position: Vec3;
+    size: Vec3;
+    rotation?: Vec3;
+    displayRotation: Vec3;
+    clearancePosition: Vec3;
+    dimensionsMm: string;
+  }
+> = {
+  case: {
+    position: [0, 0, 0],
+    size: [4.5, 4.6, 2.2],
+    displayRotation: [0.06, -0.28, 0],
+    clearancePosition: [-3.3, 0, -0.8],
+    dimensionsMm: '450 × 460 × 220 mm chassis',
+  },
+  motherboard: {
+    position: [-0.65, 0.45, -0.88],
+    size: [2.44, 3.05, 0.12],
+    displayRotation: [0, 0, 0],
+    clearancePosition: [-0.65, 0.45, 0.9],
+    dimensionsMm: '305 × 244 mm ATX board',
+  },
+  cpu: {
+    position: [-0.9, 1.05, -0.76],
+    size: [0.4, 0.4, 0.045],
+    displayRotation: [0, 0, 0],
+    clearancePosition: [-0.9, 1.05, 1.8],
+    dimensionsMm: '40 × 40 mm example package',
+  },
+  cooler: {
+    position: [-0.9, 1.05, 0.045],
+    size: [1.25, 1.25, 1.55],
+    displayRotation: [-0.16, -0.65, 0],
+    clearancePosition: [-0.9, 1.05, 3.1],
+    dimensionsMm: '125 × 125 × 155 mm cooler',
+  },
+  gpu: {
+    position: [-0.55, -0.63, -0.245],
+    size: [2.8, 0.45, 1.2],
+    displayRotation: [-Math.PI / 2, 0, 0],
+    clearancePosition: [-0.55, -0.63, 2.3],
+    dimensionsMm: '280 × 120 × 45 mm graphics card',
+  },
+  ram: {
+    position: [0.19, 1.03, -0.62],
+    size: [0.2, 1.3335, 0.34],
+    displayRotation: [0, -Math.PI / 2, 0],
+    clearancePosition: [0.8, 1.03, 1.5],
+    dimensionsMm: '2 × 133.35 mm DIMMs',
+  },
+  psu: {
+    position: [-1.42, -1.75, -0.05],
+    size: [1.4, 0.86, 1.5],
+    displayRotation: [0.42, -0.35, 0],
+    clearancePosition: [-3.3, -1.75, 0.2],
+    dimensionsMm: '150 × 86 × 140 mm PSU',
+  },
+  ssd: {
+    position: [0.91, -0.75, -0.99],
+    size: [0.6985, 1.0, 0.07],
+    displayRotation: [0, 0, 0],
+    clearancePosition: [1.35, -0.75, -1.6],
+    dimensionsMm: '100 × 69.85 × 7 mm SATA SSD',
+  },
+  fans: {
+    position: [2.02, 0.25, 0],
+    size: [1.2, 3.7, 0.25],
+    rotation: [0, Math.PI / 2, 0],
+    displayRotation: [0, 0, 0],
+    clearancePosition: [3.15, 0.25, 0],
+    dimensionsMm: '3 × 120 × 120 × 25 mm fans',
+  },
+  'rear-fan': {
+    position: [-2.04, 1.27, 0.12],
+    size: [1.2, 1.2, 0.25],
+    rotation: [0, -Math.PI / 2, 0],
+    displayRotation: [0, 0, 0],
+    clearancePosition: [-3.1, 1.27, 0],
+    dimensionsMm: '120 × 120 × 25 mm exhaust',
+  },
+};
+for (const p of desktop) {
+  Object.assign(p, desktopDimensions[p.id], { detail: 'desktop' });
+  p.cameraTarget = p.position;
+  p.specifications['Model dimensions'] = p.dimensionsMm!;
+}
+
 const mb = (
   id: string,
   name: string,

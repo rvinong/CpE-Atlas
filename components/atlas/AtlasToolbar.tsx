@@ -26,7 +26,10 @@ export function AtlasToolbar() {
             min="0"
             max="100"
             value={Math.round(state.exploded * 100)}
-            onChange={(e) => state.setExploded(Number(e.target.value) / 100)}
+            onChange={(e) => {
+              state.select(null);
+              state.setExploded(Number(e.target.value) / 100);
+            }}
           />
           <div className="slider-captions">
             <span>Assembled</span>
@@ -53,7 +56,10 @@ export function AtlasToolbar() {
         <Button
           variant="ghost"
           className={state.exploded > 0 ? 'active' : ''}
-          onClick={() => state.setExploded(state.exploded > 0 ? 0 : 1)}
+          onClick={() => {
+            state.select(null);
+            state.setExploded(state.exploded > 0 ? 0 : 1);
+          }}
           aria-pressed={state.exploded > 0}
         >
           <Layers size={18} />

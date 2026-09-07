@@ -41,6 +41,10 @@ export interface AtlasPart {
   geometry: GeometryKind;
   lesson: string;
   rotation?: Vec3;
+  detail?: 'desktop';
+  displayRotation?: Vec3;
+  clearancePosition?: Vec3;
+  dimensionsMm?: string;
 }
 export interface AtlasSystem {
   id: SystemId;

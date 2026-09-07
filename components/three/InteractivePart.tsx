@@ -1,8 +1,21 @@
 /* eslint-disable react/react-compiler -- R3F owns mutable Three.js objects; render-loop transforms and material changes intentionally use its imperative API. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
-import { Group, MathUtils, Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import {
+  Euler,
+  Group,
+  MathUtils,
+  Mesh,
+  MeshStandardMaterial,
+  Quaternion,
+  Vector3,
+} from 'three';
+import {
+  displayProgress,
+  partPosition,
+  type DisplaySlot,
+} from '@/lib/atlas/explosion';
 import type { AtlasPart } from '@/lib/atlas/types';
 import { PartGeometry } from './PartGeometry';
 
@@ -17,6 +30,8 @@ export function InteractivePart({
   onSelect,
   reducedMotion = false,
   preview = false,
+  displaySlot,
+  progress,
 }: {
   part: AtlasPart;
   selected: boolean;
@@ -28,12 +43,19 @@ export function InteractivePart({
   onSelect: (id: string) => void;
   reducedMotion?: boolean;
   preview?: boolean;
+  displaySlot?: DisplaySlot;
+  progress?: RefObject<number>;
 }) {
   const group = useRef<Group>(null);
   const materials = useRef<MeshStandardMaterial[]>([]);
   const [hovered, setHovered] = useState(false);
   const target = useRef(new Vector3());
+  const geometry = useRef<Group>(null);
+  const rotationTarget = useRef(new Quaternion());
+  const rotationStart = useRef(new Quaternion());
+  const caption = useRef<HTMLSpanElement>(null);
   const invalidate = useThree((s) => s.invalidate);
+  const canvasHeight = useThree((s) => s.size.height);
   useEffect(() => {
     materials.current = [];
     group.current?.traverse((object) => {
@@ -60,20 +82,34 @@ export function InteractivePart({
   }, [hidden, xray, part.geometry]);
   useFrame((_, dt) => {
     if (!group.current) return;
-    target.current.set(
-      part.position[0] +
-        (part.explodedPosition[0] - part.position[0]) * exploded,
-      part.position[1] +
-        (part.explodedPosition[1] - part.position[1]) * exploded,
-      part.position[2] +
-        (part.explodedPosition[2] - part.position[2]) * exploded,
-    );
+    const amount = progress?.current ?? exploded;
+    target.current.set(...partPosition(part, amount, displaySlot));
+    if (caption.current)
+      caption.current.style.visibility =
+        displaySlot && !hovered && !selected && !labels && amount < 0.97
+          ? 'hidden'
+          : 'visible';
     const factor = reducedMotion ? 1 : 1 - Math.exp(-7 * Math.min(dt, 0.1));
     group.current.position.lerp(target.current, factor);
     const opacity =
       part.geometry === 'case' && xray ? 0.075 : dimmed ? 0.22 : 1;
     let animating =
       group.current.position.distanceToSquared(target.current) > 0.00001;
+    if (geometry.current) {
+      rotationStart.current.setFromEuler(
+        new Euler(...(part.rotation ?? [0, 0, 0])),
+      );
+      rotationTarget.current.setFromEuler(
+        new Euler(...(displaySlot?.rotation ?? part.rotation ?? [0, 0, 0])),
+      );
+      rotationStart.current.slerp(
+        rotationTarget.current,
+        displaySlot ? displayProgress(amount) : 0,
+      );
+      geometry.current.quaternion.slerp(rotationStart.current, factor);
+      animating ||=
+        geometry.current.quaternion.angleTo(rotationStart.current) > 0.001;
+    }
     for (const material of materials.current) {
       material.opacity = MathUtils.lerp(material.opacity, opacity, factor);
       animating ||= Math.abs(material.opacity - opacity) > 0.001;
@@ -108,22 +144,39 @@ export function InteractivePart({
         if (event.delta < 5) onSelect(part.id);
       }}
     >
-      <group rotation={part.rotation}>
+      <group ref={geometry} rotation={part.rotation}>
         <PartGeometry part={part} />
       </group>
-      {!preview && !hidden && (hovered || selected || labels) && (
-        <Html
-          position={[0, part.size[1] / 2 + 0.17, 0.15]}
-          center
-          distanceFactor={8}
-          style={{ pointerEvents: 'none' }}
-        >
-          <span className={`component-label ${selected ? 'selected' : ''}`}>
-            {selected && <i />}
-            {part.name}
-          </span>
-        </Html>
-      )}
+      {!preview &&
+        !hidden &&
+        (hovered ||
+          selected ||
+          labels ||
+          (!!displaySlot && exploded > 0.96)) && (
+          <Html
+            position={
+              displaySlot && exploded > 0.96
+                ? [0, -displaySlot.size[1] / 2 - 0.25, displaySlot.size[2] / 2]
+                : [0, part.size[1] / 2 + 0.17, 0.15]
+            }
+            center
+            distanceFactor={
+              displaySlot && exploded > 0.96 ? canvasHeight / 75 : 8
+            }
+            style={{ pointerEvents: 'none' }}
+          >
+            <span
+              ref={caption}
+              className={`component-label ${selected ? 'selected' : ''} ${displaySlot && exploded > 0.96 ? 'catalog-label' : ''}`}
+            >
+              {selected && <i />}
+              {part.name}
+              {displaySlot && exploded > 0.96 && (
+                <small>{part.dimensionsMm}</small>
+              )}
+            </span>
+          </Html>
+        )}
     </group>
   );
 }
