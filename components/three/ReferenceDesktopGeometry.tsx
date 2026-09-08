@@ -1,10 +1,48 @@
-import { CatmullRomCurve3, Vector3, DoubleSide } from 'three';
+import { CatmullRomCurve3, Vector3, DoubleSide, Shape, Path } from 'three';
 import type { AtlasPart, Vec3 } from '@/lib/atlas/types';
-import { Block, Fan } from './GeometryPrimitives';
+import { Block, Disc, Fan } from './GeometryPrimitives';
 import { PrintedLabel } from './PrintedLabel';
+import { coolantMounts } from '../../lib/atlas/assembly-anchors';
 const range = (n: number) => Array.from({ length: n }, (_, i) => i);
 const black = '#1d2127',
   silver = '#9ca3ab';
+
+function RearPanel() {
+  const panel = new Shape();
+  panel.moveTo(-1.45, -2.23);
+  panel.lineTo(1.45, -2.23);
+  panel.lineTo(1.45, 2.23);
+  panel.lineTo(-1.45, 2.23);
+  panel.closePath();
+  const exhaust = new Path();
+  exhaust.absarc(-0.65, 1.02, 0.55, 0, Math.PI * 2, true);
+  panel.holes.push(exhaust);
+  for (const [x, y, w, h] of [
+    [0.28, 0.8, 0.4, 1.8],
+    [-0.325, -0.9, 1.6, 0.9],
+  ]) {
+    const opening = new Path();
+    opening.moveTo(x - w / 2, y - h / 2);
+    opening.lineTo(x - w / 2, y + h / 2);
+    opening.lineTo(x + w / 2, y + h / 2);
+    opening.lineTo(x + w / 2, y - h / 2);
+    opening.closePath();
+    panel.holes.push(opening);
+  }
+  return (
+    <mesh
+      position={[-2.35, 0, 0]}
+      rotation={[0, Math.PI / 2, 0]}
+      castShadow
+      receiveShadow
+    >
+      <extrudeGeometry
+        args={[panel, { depth: 0.08, bevelEnabled: false, curveSegments: 24 }]}
+      />
+      <meshStandardMaterial color="#39414a" metalness={0.5} roughness={0.4} />
+    </mesh>
+  );
+}
 
 function RingFan({
   size = 1.2,
@@ -82,12 +120,12 @@ function MaximusBoard() {
       {[-0.6, -1.1].map((y) => (
         <group key={y}>
           <Block
-            position={[-0.1, y, 0.065]}
+            position={[-0.5, y, 0.065]}
             size={[1.23, 0.09, 0.13]}
             color={silver}
           />
           <Block
-            position={[-0.1, y, 0.133]}
+            position={[-0.5, y, 0.133]}
             size={[1.15, 0.027, 0.005]}
             color="#10141b"
           />
@@ -158,10 +196,38 @@ export function ReferenceDesktopGeometry({ part: p }: { part: AtlasPart }) {
             size={[3.07, 4.45, 0.035]}
             color="#414951"
           />
+          <RearPanel />
+          {[-1.94, 0.54].flatMap((x) =>
+            [-1.14, 1.64].map((y) => (
+              <Disc
+                key={`${x}/${y}`}
+                position={[x, y, -0.47525]}
+                radius={0.032}
+                depth={0.0345}
+                color="#aa9060"
+              />
+            )),
+          )}
+          {[0.74, 1.96].map((x) => (
+            <Block
+              key={x}
+              position={[x, 0.1, -0.4233]}
+              size={[0.055, 3.7, 0.06]}
+              color="#414951"
+            />
+          ))}
+          {[-1.75, 1.95].map((y) => (
+            <Block
+              key={y}
+              position={[1.35, y, -0.95]}
+              size={[1.27, 0.06, 1.05]}
+              color="#414951"
+            />
+          ))}
           <Block
-            position={[-2.31, 0, -0.25]}
-            size={[0.08, 4.46, 2.46]}
-            color="#39414a"
+            position={[-1.08, -1.9, -1.02]}
+            size={[2.15, 0.06, 0.86]}
+            color="#414951"
           />
           <Block
             position={[2.3, 0, -1.23]}
@@ -359,17 +425,38 @@ export function ReferenceDesktopGeometry({ part: p }: { part: AtlasPart }) {
       return (
         <group>
           {[0, 1].map((i) => {
+            const local = (point: Vec3) =>
+              new Vector3(...point).sub(new Vector3(...coolantMounts.origin));
             const curve = new CatmullRomCurve3([
-              new Vector3(-1.2, -0.58 + i * 0.12, -0.35),
-              new Vector3(-0.5, -0.4 + i * 0.13, 0.23),
-              new Vector3(0.65, 0.08 + i * 0.1, 0.15),
-              new Vector3(1, 0.7, -0.25 + i * 0.15),
+              local(coolantMounts.pump[i]),
+              local([-0.26, 0.69 + i * 0.12, 0.32]),
+              local([0.65, 1.15 + i * 0.15, 0.8]),
+              local([1.75, 1.7, 0.3 + i * 0.2]),
+              local(coolantMounts.radiator[i]),
             ]);
             return (
-              <mesh key={i} castShadow>
-                <tubeGeometry args={[curve, 40, 0.035, 8, false]} />
-                <meshStandardMaterial color="#252c34" roughness={0.88} />
-              </mesh>
+              <group key={i}>
+                <mesh castShadow>
+                  <tubeGeometry args={[curve, 40, 0.035, 8, false]} />
+                  <meshStandardMaterial color="#252c34" roughness={0.88} />
+                </mesh>
+                {[coolantMounts.pump[i], coolantMounts.radiator[i]].map(
+                  (point, j) => (
+                    <mesh
+                      key={j}
+                      position={local(point)}
+                      rotation={j === 0 ? [0, 0, Math.PI / 2] : [0, 0, 0]}
+                    >
+                      <cylinderGeometry args={[0.055, 0.055, 0.06, 16]} />
+                      <meshStandardMaterial
+                        color="#555d65"
+                        metalness={0.7}
+                        roughness={0.35}
+                      />
+                    </mesh>
+                  ),
+                )}
+              </group>
             );
           })}
         </group>
@@ -431,7 +518,7 @@ export function ReferenceDesktopGeometry({ part: p }: { part: AtlasPart }) {
     case 'ram':
       return (
         <group>
-          {[-0.055, 0.055].map((x) => (
+          {[-0.11, 0.11].map((x) => (
             <group key={x} position={[x, 0, 0]}>
               <Block size={[0.077, h, d - 0.025]} color="#c3c7cc" />
               {range(16).map((i) => (

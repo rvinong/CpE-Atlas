@@ -1,4 +1,5 @@
 import type { AtlasPart, Vec3 } from './types';
+import { coolantMounts } from './assembly-anchors';
 
 function add(
   parts: AtlasPart[],
@@ -140,42 +141,42 @@ export function applyReferenceHardware(
     [
       'vrm-heatsink',
       'Copper VRM Heatsink',
-      [-0.23, 0.88, 0.31],
+      [-0.23, 0.88, 0.29],
       [1.16, 1.24, 0.22],
       'L-shaped copper thermal assembly',
     ],
     [
       'io-cover',
       'ROG I/O Cover',
-      [-1.16, 0.62, 0.43],
+      [-1.16, 0.62, 0.42],
       [0.43, 1.79, 0.12],
       'Black-and-gold rear I/O shroud',
     ],
     [
       'm2-cover',
       'Upper M.2 Heatsink',
-      [-0.3, -0.13, 0.18],
+      [-0.3, -0.13, 0.115],
       [1.86, 0.26, 0.18],
       'Raised M.2 cooling bar',
     ],
     [
       'armor',
       'Lower Thermal Deck',
-      [-0.15, -0.88, 0.24],
+      [-0.15, -0.88, 0.15],
       [2.34, 0.74, 0.16],
       'Removable M.2 thermal cover',
     ],
     [
       'right-cover',
       'Edition 20 Accent',
-      [0.83, -0.13, 0.19],
+      [0.83, -0.13, 0.085],
       [0.88, 0.3, 0.12],
       'Anniversary gold accent panel',
     ],
     [
       'backplate',
       'Metal Backplate',
-      [0, 0, -0.05],
+      [0, 0, -0.037],
       [2.77, 3.05, 0.03],
       '3 mm rear heat-spreading plate',
     ],
@@ -229,6 +230,7 @@ export function applyReferenceHardware(
         p.displayRotation,
       );
     if (p.id === 'pcb') p.color = '#008d82';
+    if (p.id === 'leds') p.rotation = [0, 0, Math.PI / 2];
   }
   // Add the conspicuous USB clock can and the second ICSP header visible in the photo.
   const usbClock = add(
@@ -281,25 +283,25 @@ export function applyReferenceHardware(
       [2.77, 3.05, 0.72],
       '305 × 277 mm · Intel LGA1851',
     ],
-    cpu: [[-0.92, 0.75, -0.33], [0.375, 0.45, 0.04], '37.5 × 45 mm · LGA1851'],
+    cpu: [[-0.92, 0.75, -0.35], [0.375, 0.45, 0.04], '37.5 × 45 mm · LGA1851'],
     cooler: [
-      [-0.92, 0.75, 0.195],
+      [-0.92, 0.75, 0.1745],
       [0.89, 0.91, 1.01],
       '89 × 91 × 101 mm pump/display',
     ],
     gpu: [
-      [-0.48, -0.62, 0.325],
+      [-0.7, -0.5, 0.3625],
       [3.04, 0.405, 1.37],
       '304 × 137 mm · dual-slot FE',
       [-Math.PI / 2, 0, 0],
     ],
     ram: [
-      [0.1, 0.78, -0.07625],
-      [0.2, 1.359, 0.5675],
+      [0.16, 0.78, -0.08625],
+      [0.3, 1.359, 0.5675],
       '2 × 32GB · 135.9 × 56.75 mm',
       [0, -Math.PI / 2, 0],
     ],
-    ssd: [[-0.8, -0.05, -0.36], [0.8, 0.22, 0.035], '80 × 22 mm · M.2 2280'],
+    ssd: [[-0.8, 0.02, -0.41], [0.8, 0.22, 0.035], '80 × 22 mm · M.2 2280'],
     psu: [
       [-1.08, -1.12, -1.02],
       [2.1, 1.5, 0.86],
@@ -360,8 +362,8 @@ export function applyReferenceHardware(
   );
   configure(
     tubes,
-    [0.65, 1.33, 0.8],
-    [2.5, 1.5, 0.9],
+    coolantMounts.origin,
+    [2.55, 1.55, 0.9],
     'Paired braided AIO tubes',
   );
   tubes.referenceModel = 'custom-pc';

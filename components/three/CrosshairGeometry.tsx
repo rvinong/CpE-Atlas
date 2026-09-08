@@ -125,10 +125,10 @@ export function CrosshairGeometry({ part: p }: { part: AtlasPart }) {
     shape.lineTo(-w / 2, -h / 2 + 0.15);
     shape.closePath();
     const slot = new Path();
-    slot.moveTo(-0.75, -0.125);
-    slot.lineTo(0.57, -0.125);
-    slot.lineTo(0.57, 0.005);
-    slot.lineTo(-0.75, 0.005);
+    slot.moveTo(-0.67, -0.125);
+    slot.lineTo(0.65, -0.125);
+    slot.lineTo(0.65, 0.005);
+    slot.lineTo(-0.67, 0.005);
     slot.closePath();
     shape.holes.push(slot);
     return (
@@ -178,7 +178,8 @@ export function CrosshairGeometry({ part: p }: { part: AtlasPart }) {
         <Block size={p.size} color="#282e32" />
         <PrintedLabel
           text="ROG CROSSHAIR  /  EDITION 20"
-          position={[0, 0, d / 2 + 0.004]}
+          position={[0, 0, -d / 2 - 0.001]}
+          rotation={[0, Math.PI, 0]}
           width={2.2}
           height={0.15}
           color="#898778"

@@ -2,6 +2,7 @@ import { Path, Shape } from 'three';
 import type { AtlasPart, Vec3 } from '@/lib/atlas/types';
 import { Block, Disc } from './GeometryPrimitives';
 import { PrintedLabel } from './PrintedLabel';
+import { unoMountingHoles } from '../../lib/atlas/assembly-anchors';
 
 const plastic = '#242a30';
 const metal = '#b6bdc4';
@@ -53,15 +54,18 @@ function CircuitBoard({ part: p }: { part: AtlasPart }) {
   shape.closePath();
   const holeRadius =
     p.detail === 'motherboard' ? 0.018 : p.detail === 'arduino' ? 0.08 : 0.15;
-  const holes = [-1, 1].flatMap((x) =>
-    [-1, 1].map(
-      (y) =>
-        [x * (w / 2 - holeRadius * 2.8), y * (h / 2 - holeRadius * 2.8)] as [
-          number,
-          number,
-        ],
-    ),
-  );
+  const holes =
+    p.referenceModel === 'uno'
+      ? unoMountingHoles
+      : [-1, 1].flatMap((x) =>
+          [-1, 1].map(
+            (y) =>
+              [
+                x * (w / 2 - holeRadius * 2.8),
+                y * (h / 2 - holeRadius * 2.8),
+              ] as [number, number],
+          ),
+        );
   for (const [x, y] of holes) {
     const hole = new Path();
     hole.absarc(x, y, holeRadius, 0, Math.PI * 2, true);
@@ -362,8 +366,8 @@ function Qfp() {
           {range(8).map((i) => (
             <Block
               key={i}
-              position={[-0.3 + (i * 0.6) / 7, 0.43, -0.25]}
-              size={[0.035, 0.14, 0.1]}
+              position={[-0.3 + (i * 0.6) / 7, 0.43, -0.375]}
+              size={[0.035, 0.14, 0.25]}
               color={metal}
             />
           ))}
@@ -395,6 +399,17 @@ function Header({
   male?: boolean;
   split?: boolean;
 }) {
+  if (split)
+    return (
+      <group>
+        <group position={[-0.23, 0, 0]} scale={[0.54, 1, 1]}>
+          <Header columns={10} rows={rows} male={male} />
+        </group>
+        <group position={[0.285, 0, 0]} scale={[0.43, 1, 1]}>
+          <Header columns={8} rows={rows} male={male} />
+        </group>
+      </group>
+    );
   return (
     <group>
       <Block
@@ -766,13 +781,13 @@ function Axial({ part: p }: { part: AtlasPart }) {
       {[-1, 1].map((side) => (
         <group key={side}>
           <Block
-            position={[0, side * (body / 4 + h / 4 - 0.02), 0]}
-            size={[0.06, (h - body) / 2 - 0.04, 0.06]}
+            position={[0, side * (body / 4 + h / 4), 0]}
+            size={[0.06, (h - body) / 2, 0.06]}
             color={metal}
           />
           <Block
-            position={[0, side * (h / 2 - 0.03), -d / 4]}
-            size={[0.06, 0.06, d / 2]}
+            position={[0, (side * h) / 2, -d / 4]}
+            size={[0.03, 0.03, d / 2]}
             color={metal}
           />
         </group>

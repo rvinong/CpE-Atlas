@@ -98,6 +98,7 @@ export function InteractivePart({
       part.geometry === 'case' && xray ? 0.075 : dimmed ? 0.22 : 1;
     let animating =
       group.current.position.distanceToSquared(target.current) > 0.00001;
+    if (!animating) group.current.position.copy(target.current);
     if (geometry.current) {
       rotationStart.current.setFromEuler(
         new Euler(...(part.rotation ?? [0, 0, 0])),
@@ -110,6 +111,8 @@ export function InteractivePart({
         displaySlot ? displayProgress(amount) : 0,
       );
       geometry.current.quaternion.slerp(rotationStart.current, factor);
+      if (geometry.current.quaternion.angleTo(rotationStart.current) <= 0.001)
+        geometry.current.quaternion.copy(rotationStart.current);
       animating ||=
         geometry.current.quaternion.angleTo(rotationStart.current) > 0.001;
     }
