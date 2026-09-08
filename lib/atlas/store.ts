@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { SystemId } from './types';
+import { moduleInteraction } from './interaction';
 interface AtlasState {
   systemId: SystemId;
   selectedId: string | null;
@@ -35,12 +36,25 @@ export const useAtlas = create<AtlasState>((set) => ({
       xray: false,
       isolated: false,
       learn: false,
+      labels: false,
       resetKey: s.resetKey + 1,
     })),
   select: (selectedId) => set({ selectedId, isolated: false, learn: false }),
   setExploded: (exploded) =>
-    set({ exploded: Math.max(0, Math.min(1, exploded)) }),
-  toggleXray: () => set((s) => ({ xray: !s.xray })),
+    set({
+      exploded: Number.isFinite(exploded)
+        ? Math.max(0, Math.min(1, exploded))
+        : 0,
+      xray: false,
+      selectedId: null,
+      isolated: false,
+    }),
+  toggleXray: () =>
+    set((s) =>
+      moduleInteraction[s.systemId].modes.includes('xray')
+        ? { xray: !s.xray, exploded: 0, isolated: false }
+        : {},
+    ),
   toggleIsolate: () =>
     set((s) => ({ isolated: !!s.selectedId && !s.isolated })),
   toggleLabels: () => set((s) => ({ labels: !s.labels })),
@@ -52,6 +66,7 @@ export const useAtlas = create<AtlasState>((set) => ({
       xray: false,
       isolated: false,
       learn: false,
+      labels: false,
       resetKey: s.resetKey + 1,
     })),
 }));

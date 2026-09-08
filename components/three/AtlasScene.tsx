@@ -1,5 +1,5 @@
 'use client';
-import { Component, Suspense, type ReactNode } from 'react';
+import { Component, Suspense, useState, type ReactNode } from 'react';
 import {
   useBrowserReady,
   useReducedMotion,
@@ -39,13 +39,14 @@ export function SceneLoading() {
   return (
     <output className="scene-loading">
       <LoaderCircle size={18} />
-      Preparing your workspaceâ€¦
+      Preparing your workspace...
     </output>
   );
 }
 export default function AtlasScene({ preview = false }: { preview?: boolean }) {
   const state = useAtlas();
   const system = systems[preview ? 'desktop' : state.systemId];
+  const [initialCamera] = useState(() => system.camera);
   const ready = useBrowserReady();
   const reducedMotion = useReducedMotion();
   const exploded = preview ? 0 : state.exploded;
@@ -56,7 +57,12 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
       <Suspense fallback={<SceneLoading />}>
         <Canvas
           frameloop="demand"
-          camera={{ position: system.camera, fov: 38, near: 0.1, far: 100 }}
+          camera={{
+            position: initialCamera,
+            fov: 38,
+            near: 0.1,
+            far: 100,
+          }}
           dpr={[1, 1.5]}
           shadows="percentage"
           gl={{

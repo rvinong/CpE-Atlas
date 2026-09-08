@@ -1,7 +1,7 @@
 /* eslint-disable react/react-compiler -- R3F owns mutable Three.js objects; render-loop transforms and material changes intentionally use its imperative API. */
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
+import { ComponentLabel } from './ComponentLabel';
 import {
   Euler,
   Group,
@@ -57,9 +57,7 @@ export function InteractivePart({
   const geometry = useRef<Group>(null);
   const rotationTarget = useRef(new Quaternion());
   const rotationStart = useRef(new Quaternion());
-  const caption = useRef<HTMLSpanElement>(null);
   const invalidate = useThree((s) => s.invalidate);
-  const canvasHeight = useThree((s) => s.size.height);
   useEffect(() => {
     materials.current = [];
     group.current?.traverse((object) => {
@@ -87,15 +85,10 @@ export function InteractivePart({
     if (!group.current) return;
     const amount = progress?.current ?? exploded;
     target.current.set(...partPosition(part, amount, displaySlot));
-    if (caption.current)
-      caption.current.style.visibility =
-        displaySlot && !hovered && !selected && !labels && amount < 0.97
-          ? 'hidden'
-          : 'visible';
     const factor = reducedMotion ? 1 : 1 - Math.exp(-7 * Math.min(dt, 0.1));
     group.current.position.lerp(target.current, factor);
     const opacity =
-      part.geometry === 'case' && xray ? 0.075 : dimmed ? 0.22 : 1;
+      part.geometry === 'case' && xray ? 0.075 : dimmed ? 0.62 : 1;
     let animating =
       group.current.position.distanceToSquared(target.current) > 0.00001;
     if (!animating) group.current.position.copy(target.current);
@@ -154,36 +147,14 @@ export function InteractivePart({
       <group ref={geometry} rotation={part.rotation}>
         <PartGeometry part={part} />
       </group>
-      {!preview &&
-        !hidden &&
-        (hovered ||
-          selected ||
-          labels ||
-          (!!displaySlot && exploded > 0.96)) && (
-          <Html
-            position={
-              displaySlot && exploded > 0.96
-                ? [0, -displaySlot.size[1] / 2 - 0.25, displaySlot.size[2] / 2]
-                : [0, part.size[1] / 2 + 0.17, 0.15]
-            }
-            center
-            distanceFactor={
-              displaySlot && exploded > 0.96 ? canvasHeight / 75 : 8
-            }
-            style={{ pointerEvents: 'none' }}
-          >
-            <span
-              ref={caption}
-              className={`component-label ${selected ? 'selected' : ''} ${displaySlot && exploded > 0.96 ? 'catalog-label' : ''}`}
-            >
-              {selected && <i />}
-              {part.name}
-              {displaySlot && exploded > 0.96 && (
-                <small>{part.dimensionsMm}</small>
-              )}
-            </span>
-          </Html>
-        )}
+      {!preview && !hidden && (hovered || selected || labels) && (
+        <ComponentLabel
+          part={part}
+          selected={selected}
+          exploded={exploded}
+          displaySlot={displaySlot}
+        />
+      )}
     </group>
   );
 }

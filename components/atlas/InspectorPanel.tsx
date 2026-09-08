@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  BookOpen,
   ArrowUpRight,
   Crosshair,
   X,
@@ -14,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useAtlas } from '@/lib/atlas/store';
 import { systems } from '@/lib/atlas/systems';
+import { moduleInteraction } from '@/lib/atlas/interaction';
 
 export function InspectorPanel() {
   const state = useAtlas();
@@ -53,8 +53,17 @@ export function InspectorPanel() {
                 <X size={15} />
               </Button>
             </div>
+            <Button
+              variant="ghost"
+              className="return-system"
+              onClick={() => state.select(null)}
+            >
+              Back to system <span>Esc</span>
+            </Button>
             <h2>{part.name}</h2>
-            <p className="full-name">{part.fullName}</p>
+            {part.fullName !== part.name && (
+              <p className="full-name">{part.fullName}</p>
+            )}
             <span className="selected-badge">
               <span className="status-dot" /> COMPONENT SELECTED
             </span>
@@ -70,7 +79,7 @@ export function InspectorPanel() {
               <ArrowUpRight size={14} />
             </Button>
             <section className="inspector-section">
-              <h3>AT A GLANCE</h3>
+              <h3>SPECIFICATIONS</h3>
               <dl>
                 {Object.entries(part.specifications).map(([key, value]) => (
                   <div key={key}>
@@ -79,6 +88,10 @@ export function InspectorPanel() {
                   </div>
                 ))}
               </dl>
+            </section>
+            <section className="inspector-section">
+              <h3>ROLE IN SYSTEM</h3>
+              <p className="role-description">{part.lesson}</p>
             </section>
             <section className="inspector-section">
               <h3>
@@ -98,30 +111,12 @@ export function InspectorPanel() {
               </div>
             </section>
             <section className="inspector-section">
-              <h3>RELATED CONCEPTS</h3>
+              <h3>RELATED CpE TOPICS</h3>
               <div className="topic-tags">
                 {part.relatedTopics.map((topic) => (
                   <span key={topic}>{topic}</span>
                 ))}
               </div>
-            </section>
-            <section className="lesson-section">
-              <Button
-                variant="ghost"
-                className="learn-button"
-                onClick={state.toggleLearn}
-                aria-expanded={state.learn}
-              >
-                <BookOpen size={16} />
-                {state.learn ? 'Close field notes' : 'Learn more'}
-                <ArrowRight size={14} />
-              </Button>
-              {state.learn && (
-                <div className="lesson-content">
-                  <span className="eyebrow">FIELD NOTES</span>
-                  <p>{part.lesson}</p>
-                </div>
-              )}
             </section>
           </>
         ) : (
@@ -132,17 +127,9 @@ export function InspectorPanel() {
             </div>
             <span className="eyebrow">{system.category}</span>
             <h2>{system.name}</h2>
-            <p className="inspector-description">{system.overview}</p>
-            <div className="overview-stats">
-              <div>
-                <b>{String(system.parts.length).padStart(2, '0')}</b>
-                <span>COMPONENTS</span>
-              </div>
-              <div>
-                <b>360°</b>
-                <span>PERSPECTIVE</span>
-              </div>
-            </div>
+            <p className="inspector-description">
+              {moduleInteraction[system.id].purpose}
+            </p>
             <section className="inspector-section getting-started">
               <h3>A CLOSER LOOK</h3>
               <div>

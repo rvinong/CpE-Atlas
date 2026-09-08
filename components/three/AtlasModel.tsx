@@ -4,6 +4,7 @@ import { systems } from '@/lib/atlas/systems';
 import { useAtlas } from '@/lib/atlas/store';
 import { createDisplayLayout } from '@/lib/atlas/explosion';
 import { InteractivePart } from './InteractivePart';
+import { moduleInteraction } from '../../lib/atlas/interaction';
 import { CameraController } from './CameraController';
 
 export function AtlasModel({
@@ -33,6 +34,7 @@ export function AtlasModel({
     if (Math.abs(exploded - progress.current) > 0.0001) invalidate();
   }, -2);
   const selectedId = preview ? null : state.selectedId;
+  const selectedPart = system.parts.find((p) => p.id === selectedId);
   return (
     <>
       <group>
@@ -41,11 +43,20 @@ export function AtlasModel({
             key={`${system.id}-${part.id}`}
             part={part}
             selected={selectedId === part.id}
-            dimmed={!!selectedId && selectedId !== part.id}
+            dimmed={
+              !!selectedId &&
+              selectedId !== part.id &&
+              !selectedPart?.relatedComponents.includes(part.id)
+            }
             hidden={!preview && state.isolated && selectedId !== part.id}
             exploded={exploded}
             xray={preview || state.xray}
-            labels={!preview && state.labels}
+            labels={
+              !preview &&
+              state.labels &&
+              !selectedId &&
+              moduleInteraction[system.id].labels.includes(part.id)
+            }
             onSelect={state.select}
             reducedMotion={reducedMotion}
             preview={preview}

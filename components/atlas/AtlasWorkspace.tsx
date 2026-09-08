@@ -4,7 +4,6 @@ import Link from 'next/link';
 import {
   ChevronRight,
   RotateCcw,
-  Tags,
   Menu,
   Maximize,
   Minimize,
@@ -13,7 +12,6 @@ import {
   MousePointer2,
   Move,
   Command,
-  Cpu,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAtlas } from '@/lib/atlas/store';
@@ -49,7 +47,9 @@ export default function AtlasWorkspace() {
       )
         return;
       if (e.key === 'Escape') {
-        useAtlas.getState().select(null);
+        const current = useAtlas.getState();
+        if (current.selectedId) current.select(null);
+        else current.reset();
         setNavOpen(false);
       }
       if (e.key.toLowerCase() === 'r') useAtlas.getState().reset();
@@ -133,7 +133,7 @@ export default function AtlasWorkspace() {
               <Suspense
                 fallback={
                   <output className="scene-loading">
-                    Loading 3D workspace…
+                    Preparing your workspace...
                   </output>
                 }
               >
@@ -153,17 +153,6 @@ export default function AtlasWorkspace() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={state.toggleLabels}
-                aria-pressed={state.labels}
-                className={state.labels ? 'active' : ''}
-                title="Show component labels"
-                aria-label="Toggle component labels"
-              >
-                <Tags size={16} />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
                 onClick={toggleFull}
                 aria-label={fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
                 title="Fullscreen"
@@ -171,11 +160,6 @@ export default function AtlasWorkspace() {
                 {fullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
               </Button>
             </div>
-            {system.id === 'arduino' && (
-              <div className="pin-mode-note">
-                <Cpu size={12} /> INDIVIDUAL PIN MODE <span>COMING SOON</span>
-              </div>
-            )}
             {state.isolated && (
               <Button
                 variant="outline"
@@ -195,7 +179,9 @@ export default function AtlasWorkspace() {
                   ? 'ISOLATED'
                   : state.exploded > 0
                     ? 'EXPLODED'
-                    : 'ASSEMBLED'}{' '}
+                    : state.xray
+                      ? 'X-RAY'
+                      : 'EXPLORE'}{' '}
                 <span className="status-dot" />
               </span>
             </div>

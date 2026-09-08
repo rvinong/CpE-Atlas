@@ -8,10 +8,6 @@ import {
   CircuitBoard,
   Cable,
   Compass,
-  Network,
-  Bot,
-  Binary,
-  Layers,
   Check,
   X,
 } from 'lucide-react';
@@ -95,30 +91,13 @@ export function AtlasSidebar({
                   }}
                 >
                   <Icon size={16} />
-                  <span>{s.category}</span>
+                  <span>{s.name}</span>
                   {s.id === state.systemId && (
                     <span className="nav-active-dot" />
                   )}
                 </button>
               );
             })}
-            {[
-              { label: 'Digital Systems', icon: Binary },
-              { label: 'Networking', icon: Network },
-              { label: 'Embedded Systems', icon: Layers },
-              { label: 'Robotics', icon: Bot },
-            ].map(({ label, icon: Icon }) => (
-              <button
-                disabled
-                className="nav-item upcoming-nav"
-                key={label}
-                title={`${label} — coming soon`}
-              >
-                <Icon size={16} />
-                <span>{label}</span>
-                <span className="soon">SOON</span>
-              </button>
-            ))}
           </nav>
           <div className="components-section">
             <div className="sidebar-section-title">
@@ -149,7 +128,7 @@ export function AtlasSidebar({
                   className={`part-row ${state.selectedId === p.id ? 'selected' : ''}`}
                   aria-pressed={state.selectedId === p.id}
                   onClick={() => {
-                    state.select(state.selectedId === p.id ? null : p.id);
+                    state.select(p.id);
                     onClose();
                   }}
                 >
