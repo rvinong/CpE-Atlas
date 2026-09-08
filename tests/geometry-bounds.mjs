@@ -5,6 +5,8 @@ import {
   TorusGeometry,
   ExtrudeGeometry,
   RingGeometry,
+  PlaneGeometry,
+  TubeGeometry,
   Matrix4,
   Euler,
   Vector3,
@@ -36,6 +38,8 @@ export function bounds(element, parent = new Matrix4(), box = new Box3()) {
     torusGeometry: TorusGeometry,
     extrudeGeometry: ExtrudeGeometry,
     ringGeometry: RingGeometry,
+    planeGeometry: PlaneGeometry,
+    tubeGeometry: TubeGeometry,
   };
   if (constructors[type]) {
     const geometry = new constructors[type](...(props.args ?? []));

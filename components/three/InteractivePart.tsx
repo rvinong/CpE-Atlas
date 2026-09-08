@@ -47,7 +47,9 @@ export function InteractivePart({
   progress?: RefObject<number>;
 }) {
   const group = useRef<Group>(null);
-  const materials = useRef<MeshStandardMaterial[]>([]);
+  const materials = useRef<
+    { material: MeshStandardMaterial; baseOpacity: number }[]
+  >([]);
   const [hovered, setHovered] = useState(false);
   const target = useRef(new Vector3());
   const geometry = useRef<Group>(null);
@@ -63,7 +65,10 @@ export function InteractivePart({
         object instanceof Mesh &&
         object.material instanceof MeshStandardMaterial
       ) {
-        materials.current.push(object.material);
+        materials.current.push({
+          material: object.material,
+          baseOpacity: object.material.opacity,
+        });
         object.material.transparent = true;
       }
     });
@@ -110,9 +115,14 @@ export function InteractivePart({
       animating ||=
         geometry.current.quaternion.angleTo(rotationStart.current) > 0.001;
     }
-    for (const material of materials.current) {
-      material.opacity = MathUtils.lerp(material.opacity, opacity, factor);
-      animating ||= Math.abs(material.opacity - opacity) > 0.001;
+    for (const { material, baseOpacity } of materials.current) {
+      const targetOpacity = opacity * baseOpacity;
+      material.opacity = MathUtils.lerp(
+        material.opacity,
+        targetOpacity,
+        factor,
+      );
+      animating ||= Math.abs(material.opacity - targetOpacity) > 0.001;
       material.depthWrite = material.opacity > 0.85;
       material.emissive.set(
         selected ? '#367ad3' : hovered ? '#49688b' : '#000000',

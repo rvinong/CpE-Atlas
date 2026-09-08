@@ -198,7 +198,12 @@ export function InspectorPanel() {
         <p className="model-disclaimer">
           SIMPLIFIED EDUCATIONAL MODEL
           <br />
-          <span>Consistent component scale · example hardware</span>
+          <span>
+            Consistent component scale ·{' '}
+            {system.id === 'rectifier'
+              ? 'example hardware'
+              : 'reference-based geometry'}
+          </span>
         </p>
       </div>
     </aside>

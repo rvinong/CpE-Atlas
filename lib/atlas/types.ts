@@ -47,6 +47,8 @@ export interface AtlasPart {
   displayRotation?: Vec3;
   clearancePosition?: Vec3;
   dimensionsMm?: string;
+  referenceModel?: 'crosshair' | 'uno' | 'custom-pc';
+  assemblyRole?: 'cover' | 'base';
 }
 export interface AtlasSystem {
   id: SystemId;

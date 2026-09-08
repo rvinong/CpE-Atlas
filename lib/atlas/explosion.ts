@@ -51,9 +51,12 @@ export function createDisplayLayout(
       part.displayRotation ?? [0, 0, 0],
     ),
   }));
+  const cellWidthFor = (size: Vec3) =>
+    Math.max(size[0], 1.45) + 0.65 + size[2] * 0.5;
   const area = items.reduce(
     (sum, item) =>
-      sum + (Math.max(item.size[0], 1.45) + 0.65) * (item.size[1] + 0.85),
+      sum +
+      cellWidthFor(item.size) * (item.size[1] + 0.85 + item.size[2] * 0.25),
     0,
   );
   const maxWidth = Math.max(
@@ -72,7 +75,7 @@ export function createDisplayLayout(
   let row: typeof items = [];
   let width = 0;
   for (const item of items) {
-    const w = Math.max(item.size[0], 1.45) + 0.65;
+    const w = cellWidthFor(item.size);
     if (row.length && width + w > maxWidth) {
       rows.push(row);
       row = [];
@@ -82,18 +85,17 @@ export function createDisplayLayout(
     width += w;
   }
   if (row.length) rows.push(row);
-  const heights = rows.map((r) => Math.max(...r.map((i) => i.size[1])) + 0.95);
+  const heights = rows.map(
+    (r) => Math.max(...r.map((i) => i.size[1] + i.size[2] * 0.25)) + 0.95,
+  );
   const totalHeight = heights.reduce((s, h) => s + h, 0);
   const result: Record<string, DisplaySlot> = {};
   let top = totalHeight / 2;
   rows.forEach((r, index) => {
-    const rowWidth = r.reduce(
-      (s, i) => s + Math.max(i.size[0], 1.45) + 0.65,
-      0,
-    );
+    const rowWidth = r.reduce((s, i) => s + cellWidthFor(i.size), 0);
     let left = -rowWidth / 2;
     for (const item of r) {
-      const cellWidth = Math.max(item.size[0], 1.45) + 0.65;
+      const cellWidth = cellWidthFor(item.size);
       result[item.part.id] = {
         position: [left + cellWidth / 2, top - heights[index] / 2 + 0.22, 0],
         size: item.size,

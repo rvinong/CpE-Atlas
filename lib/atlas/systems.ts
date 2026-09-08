@@ -6,6 +6,7 @@ import type {
   Vec3,
 } from './types';
 import { applyComponentDimensions } from './component-dimensions';
+import { applyReferenceHardware } from './reference-hardware';
 
 function part(
   id: string,
@@ -783,6 +784,7 @@ for (const [id, parts] of [
   ['rectifier', rectifier],
 ] as const)
   applyComponentDimensions(parts, id);
+applyReferenceHardware(desktop, motherboard, arduino);
 
 export const systems: Record<SystemId, AtlasSystem> = {
   desktop: {
@@ -790,11 +792,11 @@ export const systems: Record<SystemId, AtlasSystem> = {
     name: 'Desktop Computer',
     category: 'Computer Systems',
     number: '01',
-    description: 'A complete system. Ten essential parts.',
+    description: 'A flagship desktop, component by component.',
     parts: desktop,
     camera: [7, 4.2, 9],
     overview:
-      'Discover how processing, memory, graphics, storage, and power come together in one machine. Select a part on the model or in the component list to look closer.',
+      'Explore the MSI Maestro build with an RTX 5090 Founders Edition, Maximus Z890 Extreme, and Intel Core Ultra 9 285K. Select a part to inspect its model and specifications.',
     features: { xray: true, signal: false, pins: false },
     connections: [
       { from: 'cpu', to: 'ram', kind: 'data' },
@@ -811,7 +813,7 @@ export const systems: Record<SystemId, AtlasSystem> = {
     parts: motherboard,
     camera: [-2.5, 1.8, 6.5],
     overview:
-      'Explore an ATX-sized motherboard with detailed sockets, expansion interfaces, power circuitry, and controllers. Explode to compare every component side by side.',
+      'Explore the ASUS ROG Crosshair X870E Edition 20, following the supplied black-and-gold reference. Separate the copper heatsink and thermal covers to reveal the AM5 board beneath.',
     features: { xray: false, signal: false, pins: false },
     connections: [
       { from: 'socket', to: 'dimm', kind: 'data' },

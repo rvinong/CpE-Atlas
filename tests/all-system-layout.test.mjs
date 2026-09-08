@@ -141,7 +141,7 @@ test('Board-mounted electronics sit on the PCB and do not intersect other select
     const system = systems[id],
       board = system.parts.find((p) => p.id === 'pcb');
     const hardware = system.parts
-      .filter((p) => p.id !== 'pcb')
+      .filter((p) => p.id !== 'pcb' && !p.assemblyRole)
       .map((p) => ({
         id: p.id,
         box: bounds(PartGeometry({ part: p })).applyMatrix4(
@@ -153,7 +153,9 @@ test('Board-mounted electronics sit on the PCB and do not intersect other select
     for (const { id: partId, box } of hardware) {
       assert.ok(box.min.z >= -0.001, `${id}/${partId} penetrates PCB`);
       assert.ok(
-        box.min.x > -board.size[0] / 2 - 0.2 &&
+        box.min.x >
+          -board.size[0] / 2 -
+            (id === 'arduino' && partId === 'usb' ? 0.4 : 0.2) &&
           box.max.x < board.size[0] / 2 + 0.2 &&
           box.min.y > -board.size[1] / 2 &&
           box.max.y < board.size[1] / 2,

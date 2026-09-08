@@ -1,6 +1,7 @@
 import { Path, Shape } from 'three';
 import type { AtlasPart, Vec3 } from '@/lib/atlas/types';
 import { Block, Disc } from './GeometryPrimitives';
+import { PrintedLabel } from './PrintedLabel';
 
 const plastic = '#242a30';
 const metal = '#b6bdc4';
@@ -84,6 +85,60 @@ function CircuitBoard({ part: p }: { part: AtlasPart }) {
           <meshStandardMaterial color={gold} metalness={0.8} roughness={0.4} />
         </mesh>
       ))}
+      {p.referenceModel === 'uno' && (
+        <group>
+          <PrintedLabel
+            text="ARDUINO"
+            position={[0.49, 0.28, d / 2 + 0.005]}
+            width={1.1}
+            height={0.17}
+          />
+          <PrintedLabel
+            text="∞  UNO"
+            position={[0.48, 0.59, d / 2 + 0.005]}
+            width={1.13}
+            height={0.3}
+          />
+          <PrintedLabel
+            text="DIGITAL  ~ PWM"
+            position={[0.25, 0.87, d / 2 + 0.005]}
+            width={1.1}
+            height={0.08}
+          />
+          <PrintedLabel
+            text="POWER"
+            position={[0.15, -0.91, d / 2 + 0.005]}
+            width={0.44}
+            height={0.07}
+          />
+          <PrintedLabel
+            text="ANALOG IN"
+            position={[1.04, -0.91, d / 2 + 0.005]}
+            width={0.65}
+            height={0.07}
+          />
+          {range(14).map((i) => (
+            <PrintedLabel
+              key={i}
+              text={String(13 - i)}
+              position={[-0.17 + i * 0.127, 1.06, d / 2 + 0.005]}
+              width={0.075}
+              height={0.09}
+              rotation={[0, 0, Math.PI / 2]}
+            />
+          ))}
+          {range(6).map((i) => (
+            <PrintedLabel
+              key={i}
+              text={`A${i}`}
+              position={[0.72 + i * 0.127, -1.07, d / 2 + 0.005]}
+              width={0.09}
+              height={0.06}
+              rotation={[0, 0, Math.PI / 2]}
+            />
+          ))}
+        </group>
+      )}
       {p.detail === 'rectifier' ? (
         <BridgeTracks z={d / 2 + 0.004} />
       ) : (
@@ -771,6 +826,19 @@ function Terminal() {
 
 export function ElectronicsGeometry({ part: p }: { part: AtlasPart }) {
   if (p.id === 'pcb') return <CircuitBoard part={p} />;
+  if (p.referenceModel === 'uno' && p.id === 'usb-clock')
+    return (
+      <group>
+        <Block size={p.size} color="#b7bdbd" />
+        <PrintedLabel
+          text="16.000"
+          position={[0, 0, p.size[2] / 2 + 0.001]}
+          width={0.43}
+          height={0.13}
+          color="#343f42"
+        />
+      </group>
+    );
   if (p.detail === 'motherboard' && p.id === 'm2')
     return (
       <group>
@@ -911,6 +979,7 @@ export function ElectronicsGeometry({ part: p }: { part: AtlasPart }) {
         detail = <Header columns={8} />;
         break;
       case 'icsp':
+      case 'usb-icsp':
         detail = <Header columns={2} rows={3} male />;
         break;
       case 'dc-jack':
