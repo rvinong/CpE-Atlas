@@ -41,7 +41,10 @@ export function bounds(element, parent = new Matrix4(), box = new Box3()) {
     planeGeometry: PlaneGeometry,
     tubeGeometry: TubeGeometry,
   };
-  if (constructors[type]) {
+  if (type === 'primitive' && props.object?.isBufferGeometry) {
+    props.object.computeBoundingBox();
+    box.union(props.object.boundingBox.clone().applyMatrix4(matrix));
+  } else if (constructors[type]) {
     const geometry = new constructors[type](...(props.args ?? []));
     geometry.computeBoundingBox();
     box.union(geometry.boundingBox.clone().applyMatrix4(matrix));

@@ -322,7 +322,20 @@ export function ReferenceDesktopGeometry({ part: p }: { part: AtlasPart }) {
     case 'radiator':
       return (
         <group>
-          <Block position={[0, 0.125, 0]} size={[w, 0.3, d]} color="#242a30" />
+          {[-1, 1].map((side) => (
+            <group key={side}>
+              <Block
+                position={[side * (w / 2 - 0.06), 0.125, 0]}
+                size={[0.12, 0.3, d]}
+                color="#242a30"
+              />
+              <Block
+                position={[0, 0.125, side * (d / 2 - 0.02)]}
+                size={[w, 0.3, 0.04]}
+                color="#242a30"
+              />
+            </group>
+          ))}
           {range(70).map((i) => (
             <Block
               key={i}
@@ -379,7 +392,7 @@ export function ReferenceDesktopGeometry({ part: p }: { part: AtlasPart }) {
               position={[x, -0.11, 0]}
               rotation={[Math.PI / 2, 0, 0]}
             >
-              <Fan size={1.08} />
+              <Fan size={1.08} framed={false} />
             </group>
           ))}
           {[-1, 1].map((side) => (
@@ -486,7 +499,7 @@ export function ReferenceDesktopGeometry({ part: p }: { part: AtlasPart }) {
         <group>
           <Block size={p.size} color="#232a32" />
           <group position={[0.1, 0, -0.335]} rotation={[0, Math.PI, 0]}>
-            <Fan size={1.34} />
+            <Fan size={1.34} framed={false} />
           </group>
           <PrintedLabel
             text="SEASONIC  PRIME TX-1600"

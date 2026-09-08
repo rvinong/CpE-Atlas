@@ -1,4 +1,29 @@
 import type { Vec3 } from '@/lib/atlas/types';
+import { Shape } from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const roundedBoxes = new Map<string, RoundedBoxGeometry>();
+function housingGeometry(size: Vec3) {
+  const shortest = Math.min(...size);
+  if (shortest < 0.045 || Math.max(...size) < 0.15) return null;
+  const key = size.join(',');
+  let geometry = roundedBoxes.get(key);
+  if (!geometry) {
+    geometry = new RoundedBoxGeometry(
+      ...size,
+      2,
+      Math.min(shortest * 0.08, 0.025),
+    );
+    roundedBoxes.set(key, geometry);
+  }
+  return geometry;
+}
+const blade = new Shape();
+blade.moveTo(0.085, -0.03);
+blade.bezierCurveTo(0.18, -0.09, 0.31, -0.07, 0.395, 0.04);
+blade.quadraticCurveTo(0.4, 0.075, 0.38, 0.11);
+blade.bezierCurveTo(0.23, 0.1, 0.17, 0.15, 0.1, 0.06);
+blade.closePath();
 
 export function Block({
   position = [0, 0, 0],
@@ -11,12 +36,17 @@ export function Block({
   color?: string;
   metalness?: number;
 }) {
+  const geometry = housingGeometry(size);
   return (
     <mesh position={position} castShadow receiveShadow>
-      <boxGeometry args={size} />
+      {geometry ? (
+        <primitive object={geometry} attach="geometry" />
+      ) : (
+        <boxGeometry args={size} />
+      )}
       <meshStandardMaterial
         color={color}
-        roughness={0.48}
+        roughness={metalness < 0.3 ? 0.72 : 0.38}
         metalness={metalness}
       />
     </mesh>
@@ -43,46 +73,67 @@ export function Disc({
 export function Fan({
   size = 1,
   position = [0, 0, 0],
+  framed = true,
 }: {
   size?: number;
   position?: Vec3;
+  framed?: boolean;
 }) {
   return (
     <group position={position} scale={size}>
-      {[-0.47, 0.47].map((v) => (
-        <group key={v}>
-          <Block position={[v, 0, 0]} size={[0.08, 1, 0.12]} color="#35414e" />
-          <Block position={[0, v, 0]} size={[1, 0.08, 0.12]} color="#35414e" />
-        </group>
-      ))}
+      {framed &&
+        [-0.47, 0.47].map((v) => (
+          <group key={v}>
+            <Block
+              position={[v, 0, 0]}
+              size={[0.08, 1, 0.12]}
+              color="#35414e"
+            />
+            <Block
+              position={[0, v, 0]}
+              size={[1, 0.08, 0.12]}
+              color="#35414e"
+            />
+          </group>
+        ))}
       <mesh rotation={[0, 0, 0]}>
         <torusGeometry args={[0.405, 0.035, 8, 40]} />
-        <meshStandardMaterial color="#8b9aac" metalness={0.7} roughness={0.4} />
+        <meshStandardMaterial
+          color="#252b32"
+          metalness={0.15}
+          roughness={0.65}
+        />
       </mesh>
       {Array.from({ length: 9 }, (_, i) => (
         <group key={i} rotation={[0, 0, (i * Math.PI * 2) / 9]}>
-          <mesh position={[0.22, 0, 0.02]} rotation={[0, 0.25, 0.55]}>
-            <boxGeometry args={[0.31, 0.12, 0.032]} />
+          <mesh position={[0, 0, 0.012]} castShadow>
+            <extrudeGeometry
+              args={[
+                blade,
+                { depth: 0.024, bevelEnabled: false, curveSegments: 8 },
+              ]}
+            />
             <meshStandardMaterial
-              color="#667586"
-              metalness={0.5}
-              roughness={0.5}
+              color="#424b55"
+              metalness={0.12}
+              roughness={0.64}
             />
           </mesh>
         </group>
       ))}
-      <Disc radius={0.12} depth={0.14} color="#a2adbd" />
-      {[-0.42, 0.42].flatMap((x) =>
-        [-0.42, 0.42].map((y) => (
-          <Disc
-            key={`${x}${y}`}
-            position={[x, y, 0.075]}
-            radius={0.025}
-            depth={0.015}
-            color="#b0bac4"
-          />
-        )),
-      )}
+      <Disc radius={0.12} depth={0.14} color="#343c46" />
+      {framed &&
+        [-0.42, 0.42].flatMap((x) =>
+          [-0.42, 0.42].map((y) => (
+            <Disc
+              key={`${x}${y}`}
+              position={[x, y, 0.075]}
+              radius={0.025}
+              depth={0.015}
+              color="#b0bac4"
+            />
+          )),
+        )}
     </group>
   );
 }

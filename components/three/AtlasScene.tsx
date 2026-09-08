@@ -9,6 +9,8 @@ import { LoaderCircle, MonitorX } from 'lucide-react';
 import { systems } from '@/lib/atlas/systems';
 import { useAtlas } from '@/lib/atlas/store';
 import { AtlasModel } from './AtlasModel';
+import { ACESFilmicToneMapping } from 'three';
+import { StudioLighting } from './StudioLighting';
 
 class SceneBoundary extends Component<
   { children: ReactNode },
@@ -61,6 +63,8 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
             antialias: true,
             alpha: true,
             powerPreference: 'high-performance',
+            toneMapping: ACESFilmicToneMapping,
+            toneMappingExposure: 1.1,
           }}
           onPointerMissed={(event) => {
             if (!preview && event.type === 'click') state.select(null);
@@ -71,11 +75,12 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
             </div>
           }
         >
-          <ambientLight intensity={1.2} />
-          <hemisphereLight args={['#b8cee8', '#30333a', 1.5]} />
+          <StudioLighting />
+          <ambientLight intensity={0.3} />
+          <hemisphereLight args={['#d5e0eb', '#333037', 0.65]} />
           <directionalLight
             position={[4, 7, 6]}
-            intensity={3.2}
+            intensity={2.8}
             castShadow
             shadow-mapSize={[1024, 1024]}
             shadow-camera-left={-7}
@@ -86,8 +91,8 @@ export default function AtlasScene({ preview = false }: { preview?: boolean }) {
           />
           <directionalLight
             position={[-5, 2, -3]}
-            intensity={3}
-            color="#8eafd5"
+            intensity={1.8}
+            color="#b8cce0"
           />
           <directionalLight position={[0, -2, 5]} intensity={0.7} />
           <AtlasModel

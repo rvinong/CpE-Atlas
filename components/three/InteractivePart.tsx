@@ -5,7 +5,6 @@ import { Html } from '@react-three/drei';
 import {
   Euler,
   Group,
-  MathUtils,
   Mesh,
   MeshStandardMaterial,
   Quaternion,
@@ -18,6 +17,11 @@ import {
 } from '@/lib/atlas/explosion';
 import type { AtlasPart } from '@/lib/atlas/types';
 import { PartGeometry } from './PartGeometry';
+import {
+  captureAppearance,
+  applyAppearance,
+  type MaterialAppearance,
+} from '@/lib/atlas/material-appearance';
 
 export function InteractivePart({
   part,
@@ -47,9 +51,7 @@ export function InteractivePart({
   progress?: RefObject<number>;
 }) {
   const group = useRef<Group>(null);
-  const materials = useRef<
-    { material: MeshStandardMaterial; baseOpacity: number }[]
-  >([]);
+  const materials = useRef<MaterialAppearance[]>([]);
   const [hovered, setHovered] = useState(false);
   const target = useRef(new Vector3());
   const geometry = useRef<Group>(null);
@@ -65,11 +67,7 @@ export function InteractivePart({
         object instanceof Mesh &&
         object.material instanceof MeshStandardMaterial
       ) {
-        materials.current.push({
-          material: object.material,
-          baseOpacity: object.material.opacity,
-        });
-        object.material.transparent = true;
+        materials.current.push(captureAppearance(object.material));
       }
     });
   }, [part]);
@@ -115,19 +113,15 @@ export function InteractivePart({
       animating ||=
         geometry.current.quaternion.angleTo(rotationStart.current) > 0.001;
     }
-    for (const { material, baseOpacity } of materials.current) {
-      const targetOpacity = opacity * baseOpacity;
-      material.opacity = MathUtils.lerp(
-        material.opacity,
-        targetOpacity,
+    for (const appearance of materials.current) {
+      const changing = applyAppearance(
+        appearance,
+        opacity,
         factor,
+        selected,
+        hovered,
       );
-      animating ||= Math.abs(material.opacity - targetOpacity) > 0.001;
-      material.depthWrite = material.opacity > 0.85;
-      material.emissive.set(
-        selected ? '#367ad3' : hovered ? '#49688b' : '#000000',
-      );
-      material.emissiveIntensity = selected ? 0.4 : hovered ? 0.22 : 0;
+      animating ||= changing;
     }
     if (animating) invalidate();
   });
