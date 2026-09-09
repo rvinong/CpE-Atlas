@@ -8,7 +8,7 @@ import { softwareRelease } from '@/lib/software-release';
 export const metadata: Metadata = { title: 'Download CpE Atlas', description: 'Check availability and system information for the CpE Atlas Windows desktop application.' };
 
 export default function DownloadPage() {
-  return <main className={styles.site}>
+  return <main className={styles.site} id="main-content" tabIndex={-1}>
     <SiteHeader />
     <section className={styles.pageHero}>
       <div><p className={styles.eyebrow}><i /> DESKTOP APPLICATION</p><h1>Download<br />CpE Atlas.</h1><p className={styles.pageHeroText}>A dedicated Windows learning environment for exploring detailed 3D Computer Engineering systems.</p></div>

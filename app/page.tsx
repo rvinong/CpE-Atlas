@@ -12,7 +12,7 @@ const systemIcons = [Box, CircuitBoard, Cpu, Cable, Bot];
 
 export default function Home() {
   return (
-    <main className={styles.site}>
+    <main className={styles.site} id="main-content" tabIndex={-1}>
       <SiteHeader />
       <section className={styles.hero}>
         <div className={styles.heroGrid} aria-hidden="true" />

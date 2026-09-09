@@ -4,8 +4,10 @@ import styles from './marketing.module.css';
 
 export function SiteHeader() {
   return (
-    <header className={styles.header}>
-      <div className={styles.headerInner}>
+    <>
+      <a className={styles.skipLink} href="#main-content">Skip to content</a>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
         <Link href="/" className={styles.brand} aria-label="CpE Atlas home">
           <span className={styles.brandMark} aria-hidden="true">
             <Box size={19} strokeWidth={1.7} />
@@ -29,8 +31,8 @@ export function SiteHeader() {
           <Link href="/atlas" className={styles.textAction}>
             Try web demo <ArrowUpRight size={14} />
           </Link>
-          <Link href="/download" className={styles.primaryAction}>
-            <Download size={14} /> Download
+          <Link href="/download" className={styles.primaryAction} aria-label="Windows app download status">
+            <Download size={14} /> Windows app
           </Link>
         </div>
 
@@ -46,8 +48,9 @@ export function SiteHeader() {
             <Link href="/download">Windows app</Link>
           </nav>
         </details>
-      </div>
-    </header>
+        </div>
+      </header>
+    </>
   );
 }
 
@@ -65,11 +68,15 @@ export function SiteFooter() {
         <Link href="/#product">Product</Link>
         <Link href="/#systems">Systems</Link>
         <Link href="/#features">Features</Link>
+        <Link href="/about">About</Link>
         <Link href="/download">Download</Link>
         <Link href="/changelog">Changelog</Link>
         <Link href="/atlas">Web demo</Link>
       </nav>
-      <p className={styles.footerNote}>Built as an interactive learning companion for Computer Engineering.</p>
+      <p className={styles.footerNote}>
+        Built as an interactive learning companion for Computer Engineering.
+        <Link href="/download">Windows version coming soon →</Link>
+      </p>
     </footer>
   );
 }
