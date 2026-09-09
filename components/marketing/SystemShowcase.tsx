@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowUpRight, Bot, Box, Cable, CircuitBoard, Cpu } from 'lucide-react';
 import { atlasSystems } from '@/lib/site';
 import styles from './marketing.module.css';
+import { HomeProduct } from './HomeProduct';
 
 const systemIcons = [Box, CircuitBoard, Cpu, Cable, Bot];
 
@@ -31,8 +32,7 @@ export function SystemShowcase() {
         <div className={styles.systemCanvas}>
           <div className={styles.canvasGrid} aria-hidden="true" />
           {active.id === 'desktop' ? (
-            // oxlint-disable-next-line next/no-img-element
-            <img src="/og.png" alt="CpE Atlas exploded desktop computer experience" width={1729} height={910} />
+            <HomeProduct />
           ) : (
             <div className={styles.systemSchematic} aria-hidden="true"><span /><span /><ActiveIcon size={112} strokeWidth={0.75} /></div>
           )}

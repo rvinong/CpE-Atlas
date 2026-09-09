@@ -347,3 +347,74 @@
 @media (prefers-reduced-motion: reduce) {
   .site *, .site *::before, .site *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Homepage composition is scoped so supporting routes retain their layouts. */
+.home .hero { display: flex; flex-direction: column; min-height: 0; padding: 145px 24px 60px; gap: 36px; text-align: center; background: var(--cosmic); }
+.home .hero::after { display: none; }
+.home .heroCopy { width: 100%; max-width: 980px; }
+.home .heroBrand { margin: 0 0 25px; font-size: 19px; letter-spacing: .19em; }
+.home .hero h1 { max-width: 980px; margin: 0 auto 26px; font-size: clamp(42px,5.2vw,76px); line-height: 1.07; letter-spacing: -.055em; }
+.home .heroText { max-width: 630px; margin: 0 auto; }
+.home .heroActions { justify-content: center; margin-top: 28px; }
+.home .heroPrimary { width: auto; min-width: 160px; align-self: center; }
+.home .heroVisual { width: min(100%,960px); height: clamp(350px,52vw,650px); margin: 0 auto; animation: none; background: radial-gradient(ellipse at center,rgba(121,140,183,.08),transparent 65%); }
+.home .section, .home .featuredSection { width: min(100% - 48px,1040px); margin: 0 auto; padding: 90px 0; text-align: center; }
+.home .introSection, .home .processSection, .home .featuredSection, .home .educationSection { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+.home .sectionHeading { flex-direction: column; align-items: center; gap: 16px; margin-bottom: 40px; }
+.home .sectionHeading h2, .home .introStatement h2, .home .featuredCopy h2, .home .educationSection h2 { max-width: 820px; font-size: clamp(32px,3.7vw,50px); line-height: 1.13; margin-inline: auto; }
+.home .sectionHeading > p, .home .introStatement > p, .home .featuredCopy > p:not(.sectionIndex), .home .educationSection > div:last-child { max-width: 620px; margin-inline: auto; }
+.home .relationshipDiagram { width: min(100%,760px); margin-top: 20px; }
+.home .relationshipDiagram div { align-items: center; }
+.home .relationshipDiagram div::before { left: calc(50% - 3px); }
+.home .systemShowcase { display: flex; flex-direction: column; border: 0; min-height: 0; }
+.home .systemSelector { flex-direction: row; justify-content: center; flex-wrap: wrap; border: 0; gap: 8px; overflow: visible; }
+.home .systemSelector button { flex: 0 1 auto; display: block; min-height: 46px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 3px; text-align: center; color: var(--secondary); }
+.home .systemSelector button > span, .home .systemSelector button svg { display: none; }
+.home .systemSelector button[aria-selected='true'] { background: rgba(91,140,255,.1); border-color: var(--blue); box-shadow: none; color: var(--text); }
+.home .activeSystem { display: flex; flex-direction: column; }
+.home .systemCanvas { height: clamp(340px,48vw,530px); min-height: 300px; margin-top: 28px; background: transparent; }
+.home .systemCanvas::before, .home .systemCanvas::after, .home .canvasGrid, .home .canvasCoordinate, .home .canvasStatus { display: none; }
+.home .systemCanvas img { min-height: 0; height: auto; max-width: 760px; margin: auto; }
+.home .systemInfo { display: flex; flex-direction: column; gap: 14px; padding: 26px 0 0; background: transparent; border: 0; }
+.home .systemInfo p { max-width: 580px; margin: 0; }
+.home .systemInfo > p:first-child, .home .systemTags { display: none; }
+.home .systemInfo > a { margin-top: 8px; }
+.home .processIntro { position: static; }
+.home .processIntro h2 { font-size: clamp(34px,4vw,52px); }
+.home .processIntro > p:last-child { max-width: 580px; margin-inline: auto; }
+.home .processTrack { width: min(100%,700px); }
+.home .processTrack li { display: flex; flex-direction: column; gap: 12px; padding: 28px 12px; min-height: 0; }
+.home .processTrack li::before, .home .processTrack li > span { display: none; }
+.home .processTrack svg { border: 0; padding: 0; }
+.home .processTrack p { margin: 0 auto; }
+.home .featuredSection { min-height: 0; background: transparent; border-block: 1px solid var(--border); }
+.home .featuredCopy { padding: 0; width: 100%; }
+.home .sequence { max-width: 650px; margin: 32px auto; }
+.home .sequence li { display: block; padding: 16px 0; }
+.home .sequence li > span { display: none; }
+.home .sequence div { display: flex; flex-direction: column; gap: 7px; }
+.home .capabilityLayout { display: flex; flex-direction: column; min-height: 0; border: 0; max-width: 760px; margin: auto; }
+.home .capabilityLead { padding: 28px 16px; min-height: 0; border: 0; background: transparent; }
+.home .capabilityLead > span, .home .viewportMini { display: none; }
+.home .capabilityLead h3, .home .capabilityLead p { margin-inline: auto; }
+.home .capabilityLead h3 { font-size: 30px; }
+.home .capabilityList article { display: flex; flex-direction: column; gap: 15px; padding: 28px 16px; }
+.home .capabilityList article:hover { padding-left: 16px; background: transparent; }
+.home .desktopPanel { display: flex; flex-direction: column; min-height: 0; padding: 0; gap: 25px; border: 0; background: transparent; }
+.home .desktopBackdrop { display: none; }
+.home .desktopIcon { border: 0; background: transparent; }
+.home .desktopPanel h2 { font-size: clamp(34px,4vw,50px); }
+.home .desktopPanel p:not(.sectionIndex) { max-width: 580px; }
+.home .desktopMeta { width: min(100%,360px); padding: 24px 0 0; border-left: 0; border-top: 1px solid var(--border); }
+.home .finalCta { background: var(--cosmic); min-height: 420px; }
+.home .finalCta::before { display: none; }
+@media (max-width: 540px) {
+  .home .hero { padding: 118px 20px 32px; gap: 22px; }
+  .home .heroBrand { font-size: 16px; }
+  .home .hero h1 { font-size: 40px; }
+  .home .heroVisual { height: 370px; }
+  .home .section, .home .featuredSection { width: calc(100% - 40px); padding-block: 65px; }
+  .home .systemSelector button { padding: 11px 12px; }
+  .home .systemSelector button strong { font-size: 12px; }
+  .home .relationshipDiagram { grid-template-columns: 1fr 1fr; }
+}

@@ -1,32 +1,27 @@
 import Link from 'next/link';
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, Box, CircuitBoard, Eye,
+  ArrowRight, ArrowUpRight, Box, CircuitBoard, Eye,
   Focus, Layers3, Monitor, MousePointer2, ScanSearch,
 } from 'lucide-react';
-import { ProductVisual } from '@/components/marketing/ProductVisual';
+import { HomeProduct } from '@/components/marketing/HomeProduct';
 import { SiteFooter, SiteHeader } from '@/components/marketing/SiteChrome';
 import { SystemShowcase } from '@/components/marketing/SystemShowcase';
 import styles from '@/components/marketing/marketing.module.css';
 
 export default function Home() {
   return (
-    <main className={styles.site} id="main-content" tabIndex={-1}>
+    <main className={`${styles.site} ${styles.home}`} id="main-content" tabIndex={-1}>
       <SiteHeader />
       <section className={styles.hero}>
-        <div className={styles.heroGrid} aria-hidden="true" />
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}><i /> SYSTEM 00 / CPE</p>
           <p className={styles.heroBrand}>CpE ATLAS</p>
           <h1>Explore Computer Engineering<br /><span>from the inside out.</span></h1>
-          <p className={styles.heroText}>A visual learning environment for computers, circuits, microcontrollers, and robotic systems. Open assemblies, inspect components, and understand how complete systems connect.</p>
+          <p className={styles.heroText}>Explore computers, circuits, and robotics in 3D. Look inside each assembly and discover how its components work together.</p>
           <div className={styles.heroActions}>
             <Link href="/atlas" className={styles.heroPrimary}>Launch Atlas <ArrowUpRight size={17} /></Link>
-            <Link href="/download" className={styles.heroSecondary}>Windows <span>Coming soon</span></Link>
           </div>
         </div>
-        <div className={styles.heroVisual}><ProductVisual immersive /></div>
-        <div className={styles.componentRail} aria-label="Featured desktop components"><span>CPU</span><span>GPU</span><span>RAM</span><span>MOTHERBOARD</span><span>PSU</span></div>
-        <a href="#product" className={styles.scrollCue}>Explore the Atlas <ArrowDown size={13} /></a>
+        <div className={styles.heroVisual}><HomeProduct /></div>
       </section>
 
       <section id="product" className={`${styles.section} ${styles.introSection}`}>
@@ -54,7 +49,6 @@ export default function Home() {
           <ol className={styles.sequence}><li><span>01</span><div><b>Assembled</b><small>Understand the complete machine.</small></div></li><li><span>02</span><div><b>Explode</b><small>Reveal how physical parts fit together.</small></div></li><li><span>03</span><div><b>Select</b><small>Focus without losing surrounding context.</small></div></li><li><span>04</span><div><b>Understand</b><small>Read the role, specifications, and relationships.</small></div></li></ol>
           <Link href="/atlas?system=desktop" className={styles.inlineLink}>Explore Desktop Computer <ArrowRight size={15} /></Link>
         </div>
-        <div className={styles.featuredVisual}><ProductVisual compact /></div>
       </section>
 
       <section className={`${styles.section} ${styles.capabilitiesSection}`}>
