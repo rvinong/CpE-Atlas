@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight, Box, Download, Menu } from 'lucide-react';
+import { ArrowUpRight, Box, Menu } from 'lucide-react';
 import styles from './marketing.module.css';
 
 export function SiteHeader() {
@@ -22,18 +22,12 @@ export function SiteHeader() {
           <Link href="/#product">Product</Link>
           <Link href="/#systems">Systems</Link>
           <Link href="/#features">Features</Link>
-          <Link href="/about">About</Link>
-          <span className={styles.navDivider} aria-hidden="true" />
           <Link href="/changelog">Changelog</Link>
         </nav>
 
         <div className={styles.headerActions}>
-          <Link href="/atlas" className={styles.textAction}>
-            Try web demo <ArrowUpRight size={14} />
-          </Link>
-          <Link href="/download" className={styles.primaryAction} aria-label="Windows app download status">
-            <Download size={14} /> Windows app
-          </Link>
+          <Link href="/download" className={styles.textAction}>Windows — Soon</Link>
+          <Link href="/atlas" className={styles.primaryAction}>Launch Atlas <ArrowUpRight size={14} /></Link>
         </div>
 
         <details className={styles.mobileMenu}>
@@ -42,10 +36,9 @@ export function SiteHeader() {
             <Link href="/#product">Product</Link>
             <Link href="/#systems">Systems</Link>
             <Link href="/#features">Features</Link>
-            <Link href="/about">About</Link>
             <Link href="/changelog">Changelog</Link>
-            <Link href="/atlas">Try web demo</Link>
-            <Link href="/download">Windows app</Link>
+            <Link href="/download">Windows — Soon</Link>
+            <Link href="/atlas">Launch Atlas</Link>
           </nav>
         </details>
         </div>
@@ -62,7 +55,7 @@ export function SiteFooter() {
           <span className={styles.brandMark} aria-hidden="true"><Box size={18} /></span>
           <span>CpE <b>ATLAS</b></span>
         </Link>
-        <p>Interactive Computer Engineering Atlas</p>
+        <p>Explore Computer Engineering from the inside out.</p>
       </div>
       <nav aria-label="Footer navigation">
         <Link href="/#product">Product</Link>
@@ -71,10 +64,10 @@ export function SiteFooter() {
         <Link href="/about">About</Link>
         <Link href="/download">Download</Link>
         <Link href="/changelog">Changelog</Link>
-        <Link href="/atlas">Web demo</Link>
+        <Link href="/atlas">Launch Atlas</Link>
       </nav>
       <p className={styles.footerNote}>
-        Built as an interactive learning companion for Computer Engineering.
+        <span><i /> WEB ATLAS AVAILABLE</span>
         <Link href="/download">Windows version coming soon →</Link>
       </p>
     </footer>

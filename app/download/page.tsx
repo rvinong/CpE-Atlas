@@ -17,7 +17,7 @@ export default function DownloadPage() {
     <section className={styles.pageSection}>
       <div className={styles.statusPanel}><span className={styles.statusIcon}><MonitorDown size={27} strokeWidth={1.4} /></span><div><h2>Windows desktop version coming soon.</h2><p>No installer has been published yet. The browser-based Atlas is available now.</p></div><span className={styles.statusBadge}>IN DEVELOPMENT</span></div>
       <div className={styles.infoGrid}>
-        <article><h3>Use the web demo today</h3><p>Explore all current systems in the full-screen browser workspace while the Windows package is being prepared.</p><Link className={styles.inlineLink} href="/atlas">Open web demo <ArrowRight size={14} /></Link></article>
+        <article><h3>Launch the web Atlas today</h3><p>Explore all current systems in the full-screen browser workspace while the Windows package is being prepared.</p><Link className={styles.inlineLink} href="/atlas">Launch Atlas <ArrowRight size={14} /></Link></article>
         <article><h3>Planned desktop experience</h3><ul><li>Dedicated mouse and keyboard workflow</li><li>Large 3D workspace</li><li>Packaged engineering models</li><li>Offline-ready application architecture</li></ul></article>
         <article><h3>System requirements</h3><p>Verified minimum and recommended requirements will be published with the first installer.</p></article>
         <article><h3>Installation and releases</h3><p>Installation steps, file size, version number, release date, and release notes will appear here once a signed build is available.</p><Link className={styles.inlineLink} href="/changelog">View changelog <ArrowRight size={14} /></Link></article>

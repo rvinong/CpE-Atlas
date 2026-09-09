@@ -1,14 +1,12 @@
 import Link from 'next/link';
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, Bot, Box, Cable, CircuitBoard, Cpu,
-  Eye, Focus, Layers3, Monitor, MousePointer2, ScanSearch,
+  ArrowDown, ArrowRight, ArrowUpRight, Box, CircuitBoard, Eye,
+  Focus, Layers3, Monitor, MousePointer2, ScanSearch,
 } from 'lucide-react';
 import { ProductVisual } from '@/components/marketing/ProductVisual';
 import { SiteFooter, SiteHeader } from '@/components/marketing/SiteChrome';
+import { SystemShowcase } from '@/components/marketing/SystemShowcase';
 import styles from '@/components/marketing/marketing.module.css';
-import { atlasSystems } from '@/lib/site';
-
-const systemIcons = [Box, CircuitBoard, Cpu, Cable, Bot];
 
 export default function Home() {
   return (
@@ -17,120 +15,61 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={styles.heroGrid} aria-hidden="true" />
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}><i /> INTERACTIVE 3D ENGINEERING ATLAS</p>
+          <p className={styles.eyebrow}><i /> SYSTEM 00 / CPE</p>
+          <p className={styles.heroBrand}>CpE ATLAS</p>
           <h1>Explore Computer Engineering<br /><span>from the inside out.</span></h1>
-          <p className={styles.heroText}>Interact with computers, circuits, microcontrollers, and robotic systems in 3D. Disassemble components, inspect how they work, and understand how complete engineering systems connect.</p>
+          <p className={styles.heroText}>A visual learning environment for computers, circuits, microcontrollers, and robotic systems. Open assemblies, inspect components, and understand how complete systems connect.</p>
           <div className={styles.heroActions}>
-            <Link href="/atlas" className={styles.heroPrimary}>Try web demo <ArrowUpRight size={17} /></Link>
-            <Link href="/download" className={styles.heroSecondary}>Windows version <span>Coming soon</span></Link>
+            <Link href="/atlas" className={styles.heroPrimary}>Launch Atlas <ArrowUpRight size={17} /></Link>
+            <Link href="/download" className={styles.heroSecondary}>Windows <span>Coming soon</span></Link>
           </div>
-          <div className={styles.heroFootnote}><span>05 SYSTEMS</span><span>COMPONENT-LEVEL EXPLORATION</span><span>WEB DEMO AVAILABLE</span></div>
         </div>
-        <div className={styles.heroVisual}><ProductVisual /></div>
-        <a href="#product" className={styles.scrollCue} aria-label="Continue to product overview">Scroll to explore <ArrowDown size={13} /></a>
+        <div className={styles.heroVisual}><ProductVisual immersive /></div>
+        <div className={styles.componentRail} aria-label="Featured desktop components"><span>CPU</span><span>GPU</span><span>RAM</span><span>MOTHERBOARD</span><span>PSU</span></div>
+        <a href="#product" className={styles.scrollCue}>Explore the Atlas <ArrowDown size={13} /></a>
       </section>
 
       <section id="product" className={`${styles.section} ${styles.introSection}`}>
         <p className={styles.sectionIndex}>01 / PRODUCT</p>
-        <div className={styles.introStatement}>
-          <h2>Computer Engineering is easier to understand when you can see how everything connects.</h2>
-          <p>CpE Atlas turns complete hardware and electronic systems into an explorable learning environment. Keep the whole assembly in view, open it up, then inspect each part in context.</p>
-        </div>
-        <div className={styles.questionRail} aria-label="CpE Atlas learning approach">
-          {['What is it?', 'How does it work?', 'How does it connect?', 'Why does it matter?'].map((item, index) => <span key={item}><b>0{index + 1}</b>{item}</span>)}
+        <div className={styles.introStatement}><h2>Computer Engineering is easier to understand when you can see how everything connects.</h2><p>CpE Atlas turns complete hardware and electronic systems into an explorable learning environment. Keep the assembly in view, open it up, then inspect each part in context.</p></div>
+        <div className={styles.relationshipDiagram} aria-label="System learning sequence">
+          {['System', 'Component', 'Connection', 'Function'].map((item, index) => <div key={item}><span>0{index + 1}</span><strong>{item}</strong>{index < 3 && <ArrowRight aria-hidden="true" />}</div>)}
         </div>
       </section>
 
       <section id="systems" className={`${styles.section} ${styles.systemsSection}`}>
-        <div className={styles.sectionHeading}>
-          <div><p className={styles.sectionIndex}>02 / SYSTEMS</p><h2>Explore the systems.</h2></div>
-          <p>Five disciplines. One consistent way to investigate them.</p>
-        </div>
-        <div className={styles.systemList}>
-          {atlasSystems.map((system, index) => {
-            const Icon = systemIcons[index];
-            return (
-              <Link key={system.id} href={`/atlas?system=${system.id}`} className={styles.systemRow}>
-                <span className={styles.systemNumber}>{system.number}</span>
-                <span className={styles.systemIcon}><Icon size={28} strokeWidth={1.25} /></span>
-                <span className={styles.systemTitle}><small>{system.category}</small><strong>{system.name}</strong></span>
-                <span className={styles.systemDescription}>{system.description}</span>
-                <span className={styles.systemDetail}>{system.detail}</span>
-                <ArrowUpRight className={styles.systemArrow} size={18} />
-              </Link>
-            );
-          })}
-        </div>
+        <div className={styles.sectionHeading}><div><p className={styles.sectionIndex}>02 / SYSTEMS</p><h2>Explore the systems<br />behind Computer Engineering.</h2></div><p>Five working modules share one precise interaction language. Choose a system to see its purpose and available tools.</p></div>
+        <SystemShowcase />
       </section>
 
       <section id="features" className={`${styles.section} ${styles.processSection}`}>
-        <div className={styles.sectionHeading}><div><p className={styles.sectionIndex}>03 / METHOD</p><h2>From system to understanding.</h2></div></div>
-        <div className={styles.processGrid}>
-          {[
-            [MousePointer2, 'Explore', 'Rotate, zoom, and examine complete engineering systems.'],
-            [Layers3, 'Disassemble', 'Separate assemblies while preserving how each part fits.'],
-            [ScanSearch, 'Inspect', 'Focus on a component and learn its role and specifications.'],
-            [CircuitBoard, 'Understand', 'Trace how parts exchange power, data, and signals.'],
-          ].map(([Icon, title, copy], index) => {
-            const StepIcon = Icon as typeof MousePointer2;
-            return <article key={String(title)} className={styles.processStep}><span className={styles.processTop}><b>0{index + 1}</b><StepIcon size={20} strokeWidth={1.4} /></span><h3>{String(title)}</h3><p>{String(copy)}</p></article>;
-          })}
-        </div>
+        <div className={styles.processIntro}><p className={styles.sectionIndex}>03 / METHOD</p><h2>From system<br />to understanding.</h2><p>A repeatable path for moving from the complete object to the engineering decisions inside it.</p></div>
+        <ol className={styles.processTrack}>
+          {[[MousePointer2, 'Explore', 'Rotate, zoom, and examine the complete system.'], [Layers3, 'Disassemble', 'Separate its assembly while preserving spatial context.'], [ScanSearch, 'Inspect', 'Focus on a component and read its technical role.'], [CircuitBoard, 'Understand', 'Connect parts through power, data, and signals.']].map(([Icon, title, copy], index) => { const StepIcon = Icon as typeof MousePointer2; return <li key={String(title)}><span>0{index + 1}</span><StepIcon size={22} strokeWidth={1.35} /><div><h3>{String(title)}</h3><p>{String(copy)}</p></div></li>; })}
+        </ol>
       </section>
 
-      <section className={`${styles.section} ${styles.featuredSection}`}>
-        <div className={styles.featuredCopy}>
-          <p className={styles.sectionIndex}>04 / FEATURED EXPERIENCE</p>
-          <h2>Take a computer apart without touching a screwdriver.</h2>
-          <p>The Desktop Computer experience keeps the original assembly readable while components move into an exploded layout. Select a part to focus the camera, reveal its role, and understand where it belongs in the complete machine.</p>
-          <ol className={styles.sequence}>
-            <li><span>01</span> Assembled PC</li><li><span>02</span> Exploded system</li>
-            <li><span>03</span> Selected component</li><li><span>04</span> Technical inspector</li>
-          </ol>
-          <Link href="/atlas?system=desktop" className={styles.inlineLink}>Explore the desktop computer <ArrowRight size={15} /></Link>
+      <section className={styles.featuredSection}>
+        <div className={styles.featuredCopy}><p className={styles.sectionIndex}>04 / FEATURED EXPERIENCE</p><h2>Take a computer apart<br />without touching a screwdriver.</h2><p>The flagship Desktop Computer module keeps the full machine readable while every major part moves into a balanced exploded layout.</p>
+          <ol className={styles.sequence}><li><span>01</span><div><b>Assembled</b><small>Understand the complete machine.</small></div></li><li><span>02</span><div><b>Explode</b><small>Reveal how physical parts fit together.</small></div></li><li><span>03</span><div><b>Select</b><small>Focus without losing surrounding context.</small></div></li><li><span>04</span><div><b>Understand</b><small>Read the role, specifications, and relationships.</small></div></li></ol>
+          <Link href="/atlas?system=desktop" className={styles.inlineLink}>Explore Desktop Computer <ArrowRight size={15} /></Link>
         </div>
-        <ProductVisual compact />
+        <div className={styles.featuredVisual}><ProductVisual compact /></div>
       </section>
 
       <section className={`${styles.section} ${styles.capabilitiesSection}`}>
-        <div className={styles.sectionHeading}>
-          <div><p className={styles.sectionIndex}>05 / SOFTWARE</p><h2>Built for close inspection.</h2></div>
-          <p>Tools appear only where the current system supports them.</p>
-        </div>
-        <div className={styles.capabilityGrid}>
-          {[
-            [Box, 'Interactive 3D', 'Navigate complete systems through a focused engineering workspace.'],
-            [Layers3, 'Exploded views', 'Separate physical assemblies without losing their spatial relationship.'],
-            [Focus, 'Camera focus', 'Move smoothly from the full system to a selected component.'],
-            [Eye, 'Component inspector', 'Read concise descriptions, specifications, roles, and related parts.'],
-            [CircuitBoard, 'System relationships', 'Study the connections that turn individual parts into a working system.'],
-            [ScanSearch, 'Technical labels', 'Use restrained labels when they help identify unfamiliar hardware.'],
-          ].map(([Icon, title, copy]) => {
-            const FeatureIcon = Icon as typeof Box;
-            return <article key={String(title)}><FeatureIcon size={19} /><h3>{String(title)}</h3><p>{String(copy)}</p></article>;
-          })}
+        <div className={styles.sectionHeading}><div><p className={styles.sectionIndex}>05 / SOFTWARE</p><h2>One workspace.<br />Purpose-built tools.</h2></div><p>The interface adapts to each system and shows only the controls the current module supports.</p></div>
+        <div className={styles.capabilityLayout}>
+          <article className={styles.capabilityLead}><Box size={24} /><span>3D VIEWPORT</span><h3>The model stays at the center.</h3><p>Navigate a spacious engineering workspace designed around the object, with the component list and technical inspector kept within reach.</p><div className={styles.viewportMini} aria-hidden="true"><i /><i /><i /></div></article>
+          <div className={styles.capabilityList}>{[[Eye, 'Component inspector', 'Structured roles, specifications, and related parts.'], [Layers3, 'Exploded view', 'Readable assembly relationships at every distance.'], [Focus, 'Camera focus', 'Smooth movement from the whole system to one part.'], [CircuitBoard, 'System relationships', 'Supported power, data, and signal connections.']].map(([Icon, title, copy]) => { const FeatureIcon = Icon as typeof Eye; return <article key={String(title)}><FeatureIcon size={19} /><div><h3>{String(title)}</h3><p>{String(copy)}</p></div></article>; })}</div>
         </div>
       </section>
 
-      <section className={`${styles.section} ${styles.desktopSection}`}>
-        <div className={styles.desktopPanel}>
-          <div className={styles.desktopIcon}><Monitor size={34} strokeWidth={1.25} /></div>
-          <div><p className={styles.sectionIndex}>06 / DESKTOP APPLICATION</p><h2>Built for the desktop.</h2><p>A focused learning environment designed for detailed 3D exploration with mouse and keyboard controls. The Windows application is in development.</p></div>
-          <div className={styles.desktopMeta}><span>PLATFORM <b>Windows</b></span><span>STATUS <b>Coming soon</b></span><Link href="/download">View download status <ArrowRight size={14} /></Link></div>
-        </div>
-      </section>
+      <section className={`${styles.section} ${styles.desktopSection}`}><div className={styles.desktopPanel}><div className={styles.desktopBackdrop} aria-hidden="true"><Monitor size={190} strokeWidth={0.45} /></div><div className={styles.desktopIcon}><Monitor size={34} strokeWidth={1.25} /></div><div><p className={styles.sectionIndex}>06 / DESKTOP APPLICATION</p><h2>A dedicated Atlas<br />is in development.</h2><p>The Windows edition is being prepared as a focused mouse-and-keyboard environment for detailed 3D study.</p></div><div className={styles.desktopMeta}><span>PLATFORM <b>Windows</b></span><span>STATUS <b>Coming soon</b></span><span>WEB ATLAS <b>Available</b></span><Link href="/download">View release status <ArrowRight size={14} /></Link></div></div></section>
 
-      <section className={`${styles.section} ${styles.educationSection}`}>
-        <p className={styles.sectionIndex}>07 / LEARNING</p>
-        <div><h2>See the system,<br />not just the diagram.</h2></div>
-        <div><p>CpE Atlas helps learners connect ideas across computer hardware, architecture, electronics, microcontrollers, embedded systems, and robotics.</p><p>It is an interactive companion for classwork, independent study, and the first steps into unfamiliar systems.</p></div>
-      </section>
+      <section className={`${styles.section} ${styles.educationSection}`}><p className={styles.sectionIndex}>07 / LEARNING</p><div><h2>See the system,<br />not just the diagram.</h2></div><div><p>CpE Atlas helps learners connect ideas across hardware, architecture, electronics, microcontrollers, embedded systems, and robotics.</p><p>Use it beside classwork, laboratories, and real hardware when you need to see how a complete system comes together.</p></div></section>
 
-      <section className={styles.finalCta}>
-        <p className={styles.eyebrow}><i /> WEB EXPERIENCE AVAILABLE</p>
-        <h2>Start exploring from the inside.</h2><p>Open the full CpE Atlas workspace in your browser.</p>
-        <Link href="/atlas" className={styles.heroPrimary}>Try web demo <ArrowUpRight size={17} /></Link>
-      </section>
+      <section className={styles.finalCta}><p className={styles.eyebrow}><i /> WEB ATLAS AVAILABLE</p><h2>Start exploring<br />from the inside.</h2><p>Five interactive engineering systems are ready in your browser.</p><Link href="/atlas" className={styles.heroPrimary}>Launch Atlas <ArrowUpRight size={17} /></Link></section>
       <SiteFooter />
     </main>
   );

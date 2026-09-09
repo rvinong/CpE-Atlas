@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { ArrowUpRight, Maximize2 } from 'lucide-react';
 import styles from './marketing.module.css';
 
-export function ProductVisual({ compact = false }: { compact?: boolean }) {
+export function ProductVisual({ compact = false, immersive = false }: { compact?: boolean; immersive?: boolean }) {
   return (
-    <figure className={`${styles.productVisual} ${compact ? styles.productVisualCompact : ''}`}>
+    <figure className={`${styles.productVisual} ${compact ? styles.productVisualCompact : ''} ${immersive ? styles.productVisualImmersive : ''}`}>
       <div className={styles.windowBar}>
         <span className={styles.windowBrand}><i /> CpE ATLAS / DESKTOP COMPUTER</span>
         <span>INTERACTIVE 3D</span>
@@ -24,15 +24,15 @@ export function ProductVisual({ compact = false }: { compact?: boolean }) {
         <div className={styles.visualShade} />
         <div className={styles.visualStatus}>
           <span><i /> PRODUCT PREVIEW</span>
-          <Link href="/atlas" aria-label="Open CpE Atlas web demo">
-            Open full workspace <Maximize2 size={13} />
+          <Link href="/atlas" aria-label="Launch CpE Atlas">
+            Launch Atlas <Maximize2 size={13} />
           </Link>
         </div>
       </div>
       {!compact && (
         <figcaption>
           <span>Rotate, disassemble, and inspect complete systems.</span>
-          <Link href="/atlas">Try it yourself <ArrowUpRight size={14} /></Link>
+          <Link href="/atlas">Launch Atlas <ArrowUpRight size={14} /></Link>
         </figcaption>
       )}
     </figure>
