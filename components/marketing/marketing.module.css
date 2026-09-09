@@ -382,7 +382,7 @@
 .home .systemInfo > p:first-child { display: block; color: var(--secondary); font-size: 12px; }
 .home .systemTags { display: none; }
 .home .systemInfo > a { margin-top: 8px; }
-.home .processIntro { position: static; }
+.home .processIntro { position: static; align-self: center; width: min(100%,580px); }
 .home .processSection { padding-top: 55px; }
 .home .processIntro h2 { font-size: clamp(34px,4vw,52px); }
 .home .processIntro > p:last-child { max-width: 580px; margin-inline: auto; }
