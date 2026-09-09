@@ -2,10 +2,11 @@
 
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useBrowserReady } from '@/hooks/use-browser-preferences';
+import type { SystemId } from '@/lib/atlas/types';
 
-const AtlasPreview = lazy(() => import('@/components/three/AtlasScene'));
+const AtlasPreview = lazy(() => import('./MarketingScene'));
 
-export function HomeProduct() {
+export function HomeProduct({ systemId = 'desktop' }: { systemId?: SystemId }) {
   const ready = useBrowserReady();
   const host = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
@@ -15,9 +16,8 @@ export function HomeProduct() {
     return () => observer.disconnect();
   }, []);
   return (
-    <figure ref={host} aria-label="Three-dimensional desktop computer model" style={{ width: '100%', height: '100%', margin: 0, position: 'relative' }}>
-      {ready && visible && <Suspense fallback={null}><AtlasPreview preview /></Suspense>}
-      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, touchAction: 'pan-y' }} />
+    <figure ref={host} aria-label={`Rotatable ${systemId} model. Drag horizontally to rotate; scroll vertically to continue.`} style={{ width: '100%', height: '100%', margin: 0, position: 'relative' }}>
+      {ready && visible && <Suspense fallback={<output>Loading model…</output>}><AtlasPreview systemId={systemId} /></Suspense>}
     </figure>
   );
 }

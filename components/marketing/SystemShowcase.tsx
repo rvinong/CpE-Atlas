@@ -10,17 +10,16 @@ import { HomeProduct } from './HomeProduct';
 const systemIcons = [Box, CircuitBoard, Cpu, Cable, Bot];
 
 export function SystemShowcase() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(1);
   const active = atlasSystems[activeIndex];
-  const ActiveIcon = systemIcons[activeIndex];
 
   return (
     <div className={styles.systemShowcase}>
-      <div className={styles.systemSelector} role="tablist" aria-label="CpE Atlas systems">
+      <div className={styles.systemSelector} aria-label="CpE Atlas systems">
         {atlasSystems.map((system, index) => {
           const Icon = systemIcons[index];
           return (
-            <button key={system.id} type="button" role="tab" aria-selected={activeIndex === index}
+            <button key={system.id} type="button" aria-pressed={activeIndex === index}
               aria-controls="active-system" className={activeIndex === index ? styles.systemTabActive : ''}
               onClick={() => setActiveIndex(index)}>
               <span>{system.number}</span><Icon size={18} strokeWidth={1.35} /><strong>{system.name}</strong>
@@ -28,14 +27,10 @@ export function SystemShowcase() {
           );
         })}
       </div>
-      <article id="active-system" role="tabpanel" className={styles.activeSystem} key={active.id}>
+      <article id="active-system" aria-label={active.name} className={styles.activeSystem} key={active.id}>
         <div className={styles.systemCanvas}>
           <div className={styles.canvasGrid} aria-hidden="true" />
-          {active.id === 'desktop' ? (
-            <HomeProduct />
-          ) : (
-            <div className={styles.systemSchematic} aria-hidden="true"><span /><span /><ActiveIcon size={112} strokeWidth={0.75} /></div>
-          )}
+          <HomeProduct systemId={active.id} />
           <span className={styles.canvasCoordinate}>SYSTEM / {active.number}</span>
           <span className={styles.canvasStatus}><i /> INTERACTIVE MODULE</span>
         </div>

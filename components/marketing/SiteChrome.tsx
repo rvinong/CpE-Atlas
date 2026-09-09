@@ -1,6 +1,8 @@
+
 import Link from 'next/link';
 import { ArrowUpRight, Box, Menu } from 'lucide-react';
 import styles from './marketing.module.css';
+import { MobileMenu } from './MobileMenu';
 
 export function SiteHeader() {
   return (
@@ -30,7 +32,7 @@ export function SiteHeader() {
           <Link href="/atlas" className={styles.primaryAction}>Launch Atlas <ArrowUpRight size={14} /></Link>
         </div>
 
-        <details className={styles.mobileMenu}>
+        <MobileMenu className={styles.mobileMenu}>
           <summary aria-label="Open navigation"><Menu size={20} /></summary>
           <nav aria-label="Mobile navigation">
             <Link href="/#product">Product</Link>
@@ -40,7 +42,7 @@ export function SiteHeader() {
             <Link href="/download">Windows — Soon</Link>
             <Link href="/atlas">Launch Atlas</Link>
           </nav>
-        </details>
+        </MobileMenu>
         </div>
       </header>
     </>
@@ -62,7 +64,7 @@ export function SiteFooter() {
         <Link href="/#systems">Systems</Link>
         <Link href="/#features">Features</Link>
         <Link href="/about">About</Link>
-        <Link href="/download">Download</Link>
+        <Link href="/download">Windows — Soon</Link>
         <Link href="/changelog">Changelog</Link>
         <Link href="/atlas">Launch Atlas</Link>
       </nav>

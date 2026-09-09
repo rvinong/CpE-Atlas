@@ -11,7 +11,7 @@ export default function DownloadPage() {
   return <main className={styles.site} id="main-content" tabIndex={-1}>
     <SiteHeader />
     <section className={styles.pageHero}>
-      <div><p className={styles.eyebrow}><i /> DESKTOP APPLICATION</p><h1>Download<br />CpE Atlas.</h1><p className={styles.pageHeroText}>A dedicated Windows learning environment for exploring detailed 3D Computer Engineering systems.</p></div>
+      <div><p className={styles.eyebrow}><i /> DESKTOP APPLICATION</p><h1>CpE Atlas<br />for Windows.</h1><p className={styles.pageHeroText}>A dedicated Windows learning environment for exploring detailed 3D Computer Engineering systems. Coming soon.</p></div>
       <div className={styles.pageHeroAside}><span>PLATFORM <b>Windows</b></span><span>AVAILABILITY <b>Coming soon</b></span>{softwareRelease.version && <span>VERSION <b>{softwareRelease.version}</b></span>}</div>
     </section>
     <section className={styles.pageSection}>

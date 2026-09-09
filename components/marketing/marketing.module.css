@@ -252,6 +252,7 @@
 @media (max-width: 1180px) {
   .headerInner, .section, .footer, .pageHero { width: min(100% - 40px,1100px); }
   .desktopNav { display: none; }
+  .mobileMenu { display: block; }
   .headerInner { grid-template-columns: 1fr auto auto; }
   .hero { min-height: 1050px; padding: 142px 20px 100px; grid-template-columns: 1fr; gap: 50px; }
   .heroCopy { max-width: 900px; }
@@ -370,14 +371,16 @@
 .home .systemSelector { flex-direction: row; justify-content: center; flex-wrap: wrap; border: 0; gap: 8px; overflow: visible; }
 .home .systemSelector button { flex: 0 1 auto; display: block; min-height: 46px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 3px; text-align: center; color: var(--secondary); }
 .home .systemSelector button > span, .home .systemSelector button svg { display: none; }
-.home .systemSelector button[aria-selected='true'] { background: rgba(91,140,255,.1); border-color: var(--blue); box-shadow: none; color: var(--text); }
+.home .systemSelector button[aria-pressed='true'] { background: rgba(91,140,255,.1); border-color: var(--blue); box-shadow: none; color: var(--text); }
 .home .activeSystem { display: flex; flex-direction: column; }
 .home .systemCanvas { height: clamp(340px,48vw,530px); min-height: 300px; margin-top: 28px; background: transparent; }
 .home .systemCanvas::before, .home .systemCanvas::after, .home .canvasGrid, .home .canvasCoordinate, .home .canvasStatus { display: none; }
 .home .systemCanvas img { min-height: 0; height: auto; max-width: 760px; margin: auto; }
 .home .systemInfo { display: flex; flex-direction: column; gap: 14px; padding: 26px 0 0; background: transparent; border: 0; }
 .home .systemInfo p { max-width: 580px; margin: 0; }
-.home .systemInfo > p:first-child, .home .systemTags { display: none; }
+.home .systemInfo > p:first-child { display: block; color: var(--secondary); font-size: 12px; }
+.home .systemTags { display: none; }
+.home .systemInfo { min-height: 230px; }
 .home .systemInfo > a { margin-top: 8px; }
 .home .processIntro { position: static; }
 .home .processIntro h2 { font-size: clamp(34px,4vw,52px); }
@@ -417,4 +420,23 @@
   .home .systemSelector button { padding: 11px 12px; }
   .home .systemSelector button strong { font-size: 12px; }
   .home .relationshipDiagram { grid-template-columns: 1fr 1fr; }
+}
+
+/* Shared public-page rhythm and comfortable control text. */
+.marketingStage canvas { touch-action: pan-y !important; }
+.site .emptyState > svg, .home .capabilityLead > svg { margin-inline: auto; }
+.site .desktopNav, .site .primaryAction, .site .textAction { font-size: 13px; }
+.site .inlineLink, .site .footer nav, .home .systemInfo > a { font-size: 14px; }
+.site .pageHero { width: min(1040px, calc(100% - 40px)); display: flex; flex-direction: column; align-items: center; gap: 30px; text-align: center; min-height: 0; padding: 145px 0 65px; }
+.site .pageHero h1 { font-size: clamp(48px, 6vw, 76px); line-height: 1.06; }
+.site .pageHero .eyebrow { justify-content: center; }
+.site .pageHeroText { max-width: 640px; margin-inline: auto; }
+.site .pageHeroAside { width: min(100%, 420px); padding: 20px 0 0; border-left: 0; }
+.site .pageSection { width: min(1040px, calc(100% - 40px)); }
+.site .aboutGrid { display: flex; flex-direction: column; text-align: center; max-width: 720px; margin: auto; gap: 32px; }
+.site .infoGrid p, .site .infoGrid li, .site .statusPanel p, .site .emptyState p { font-size: 14px; }
+.home .systemInfo > p:nth-of-type(2), .home .processTrack p, .home .capabilityList p { font-size: 14px; }
+@media (max-width: 540px) {
+  .home .systemInfo { min-height: 270px; }
+  .site .pageHero { padding-top: 118px; }
 }
