@@ -368,21 +368,22 @@
 .home .relationshipDiagram div { align-items: center; }
 .home .relationshipDiagram div::before { left: calc(50% - 3px); }
 .home .systemShowcase { display: flex; flex-direction: column; border: 0; min-height: 0; }
+.home .systemsSection { padding-bottom: 45px; }
 .home .systemSelector { flex-direction: row; justify-content: center; flex-wrap: wrap; border: 0; gap: 8px; overflow: visible; }
 .home .systemSelector button { flex: 0 1 auto; display: block; min-height: 46px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 3px; text-align: center; color: var(--secondary); }
 .home .systemSelector button > span, .home .systemSelector button svg { display: none; }
 .home .systemSelector button[aria-pressed='true'] { background: rgba(91,140,255,.1); border-color: var(--blue); box-shadow: none; color: var(--text); }
 .home .activeSystem { display: flex; flex-direction: column; }
-.home .systemCanvas { height: clamp(340px,48vw,530px); min-height: 300px; margin-top: 28px; background: transparent; }
+.home .systemCanvas { height: clamp(300px,38vw,430px); min-height: 300px; margin-top: 28px; background: transparent; }
 .home .systemCanvas::before, .home .systemCanvas::after, .home .canvasGrid, .home .canvasCoordinate, .home .canvasStatus { display: none; }
 .home .systemCanvas img { min-height: 0; height: auto; max-width: 760px; margin: auto; }
-.home .systemInfo { display: flex; flex-direction: column; gap: 14px; padding: 26px 0 0; background: transparent; border: 0; }
+.home .systemInfo { display: flex; flex-direction: column; gap: 8px; min-height: 160px; padding: 18px 0 0; background: transparent; border: 0; }
 .home .systemInfo p { max-width: 580px; margin: 0; }
 .home .systemInfo > p:first-child { display: block; color: var(--secondary); font-size: 12px; }
 .home .systemTags { display: none; }
-.home .systemInfo { min-height: 230px; }
 .home .systemInfo > a { margin-top: 8px; }
 .home .processIntro { position: static; }
+.home .processSection { padding-top: 55px; }
 .home .processIntro h2 { font-size: clamp(34px,4vw,52px); }
 .home .processIntro > p:last-child { max-width: 580px; margin-inline: auto; }
 .home .processTrack { width: min(100%,700px); }
@@ -437,6 +438,6 @@
 .site .infoGrid p, .site .infoGrid li, .site .statusPanel p, .site .emptyState p { font-size: 14px; }
 .home .systemInfo > p:nth-of-type(2), .home .processTrack p, .home .capabilityList p { font-size: 14px; }
 @media (max-width: 540px) {
-  .home .systemInfo { min-height: 270px; }
+  .home .systemInfo { min-height: 190px; }
   .site .pageHero { padding-top: 118px; }
 }
