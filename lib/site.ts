@@ -1,14 +1,10 @@
-const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : 'http://localhost:3000';
-
 export const siteConfig = {
   name: 'CpE Atlas',
   title: 'CpE Atlas — Interactive Computer Engineering Atlas',
   description:
     'Explore computer hardware, electronics, microcontrollers, circuits, and robotics through interactive 3D engineering systems.',
   tagline: 'Explore Computer Engineering from the inside out.',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? productionUrl,
+  url: 'https://cpe-atlas.vercel.app',
   repository: 'https://github.com/rvinong/CpE-Atlas',
 } as const;
 

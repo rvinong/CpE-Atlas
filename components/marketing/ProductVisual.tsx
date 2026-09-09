@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowUpRight, Maximize2 } from 'lucide-react';
 import styles from './marketing.module.css';
 
@@ -11,14 +10,16 @@ export function ProductVisual({ compact = false }: { compact?: boolean }) {
         <span>INTERACTIVE 3D</span>
       </div>
       <div className={styles.videoFrame}>
-        <Image
+        {/* Static export keeps this verified local product image unchanged. */}
+        {/* oxlint-disable-next-line next/no-img-element */}
+        <img
           src="/og.png"
           alt="CpE Atlas exploded desktop computer with its case, motherboard, graphics card, processor, memory, and cooling assembly"
           width={1729}
           height={910}
-          priority={!compact}
-          sizes={compact ? '(max-width: 820px) 100vw, 55vw' : '(max-width: 1180px) 100vw, 62vw'}
-          unoptimized
+          loading={compact ? 'lazy' : 'eager'}
+          fetchPriority={compact ? 'auto' : 'high'}
+          decoding="async"
         />
         <div className={styles.visualShade} />
         <div className={styles.visualStatus}>
