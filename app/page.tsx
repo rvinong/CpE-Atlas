@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   ArrowRight,
   Box,
+  Bot,
   Cpu,
   CircuitBoard,
   Cable,
@@ -50,7 +51,7 @@ export default function Home() {
             Launch atlas <ArrowUpRight size={19} />
           </Link>
           <div className="hero-note">
-            <span>01 — 04</span> Four systems. A world of connections.
+            <span>01 — 05</span> Five systems. A world of connections.
           </div>
         </div>
         <div className="hero-object">
@@ -118,6 +119,15 @@ export default function Home() {
               icon: Cable,
               description:
                 'Follow the conversion from alternating to direct current.',
+            },
+            {
+              id: 'robot',
+              n: '05',
+              name: 'Line Follower Robot',
+              type: 'ROBOTICS',
+              icon: Bot,
+              description:
+                'Arduino Autonomous Mobile Robot. From sensing to motion.',
             },
           ].map((s) => (
             <Link

@@ -7,6 +7,7 @@ import type {
 } from './types';
 import { applyComponentDimensions } from './component-dimensions';
 import { applyReferenceHardware } from './reference-hardware';
+import { robotSystem } from './robot';
 
 function part(
   id: string,
@@ -787,6 +788,7 @@ for (const [id, parts] of [
 applyReferenceHardware(desktop, motherboard, arduino);
 
 export const systems: Record<SystemId, AtlasSystem> = {
+  robot: robotSystem,
   desktop: {
     id: 'desktop',
     name: 'Desktop Computer',
@@ -856,8 +858,10 @@ export const systems: Record<SystemId, AtlasSystem> = {
   },
 };
 for (const system of Object.values(systems))
-  for (const p of system.parts) p.category = system.category;
-export const systemList = Object.values(systems);
+  for (const p of system.parts) if (!p.subsystem) p.category = system.category;
+export const systemList = Object.values(systems).sort((a, b) =>
+  a.number.localeCompare(b.number),
+);
 export function isSystemId(value: string | null): value is SystemId {
   return !!value && Object.hasOwn(systems, value);
 }

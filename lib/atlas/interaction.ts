@@ -7,7 +7,8 @@ export type AtlasMode =
   | 'xray'
   | 'connections'
   | 'pins'
-  | 'signal';
+  | 'signal'
+  | 'line';
 // Future teaching modes are declared here, but cannot be activated by the UI.
 export const moduleInteraction: Record<
   SystemId,
@@ -18,6 +19,13 @@ export const moduleInteraction: Record<
     purpose: string;
   }
 > = {
+  robot: {
+    modes: ['explore', 'explode', 'signal', 'line'],
+    planned: [],
+    labels: ['uno', 'driver', 'left-sensor', 'battery'],
+    purpose:
+      'Trace sensing, decisions, and actuation. Signal Flow reveals connections; Line Mode explains four steering decisions.',
+  },
   desktop: {
     modes: ['explore', 'explode', 'xray'],
     planned: [],

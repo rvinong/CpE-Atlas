@@ -1,5 +1,10 @@
 export type Vec3 = [number, number, number];
-export type SystemId = 'desktop' | 'motherboard' | 'arduino' | 'rectifier';
+export type SystemId =
+  | 'desktop'
+  | 'motherboard'
+  | 'arduino'
+  | 'rectifier'
+  | 'robot';
 export type GeometryKind =
   | 'case'
   | 'board'
@@ -47,7 +52,18 @@ export interface AtlasPart {
   displayRotation?: Vec3;
   clearancePosition?: Vec3;
   dimensionsMm?: string;
-  referenceModel?: 'crosshair' | 'uno' | 'custom-pc';
+  referenceModel?: 'crosshair' | 'uno' | 'custom-pc' | 'robot';
+  subsystem?:
+    | 'Sensing'
+    | 'Processing'
+    | 'Control'
+    | 'Power'
+    | 'Actuation'
+    | 'Mechanical';
+  signalType?: string;
+  inputs?: string;
+  outputs?: string;
+  relatedSystem?: SystemId;
   assemblyRole?: 'cover' | 'base';
 }
 export interface AtlasSystem {

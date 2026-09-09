@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { SystemId } from './types';
 import { moduleInteraction } from './interaction';
+import type { LineState } from './robot';
 interface AtlasState {
   systemId: SystemId;
   selectedId: string | null;
@@ -10,6 +11,10 @@ interface AtlasState {
   labels: boolean;
   resetKey: number;
   learn: boolean;
+  teachingMode: 'signal' | 'line' | null;
+  lineState: LineState;
+  setTeachingMode: (mode: 'signal' | 'line' | null) => void;
+  setLineState: (state: LineState) => void;
   setSystem: (id: SystemId) => void;
   select: (id: string | null) => void;
   setExploded: (value: number) => void;
@@ -28,9 +33,27 @@ export const useAtlas = create<AtlasState>((set) => ({
   labels: false,
   resetKey: 0,
   learn: false,
+  teachingMode: null,
+  lineState: 'forward',
+  setTeachingMode: (mode) =>
+    set((s) =>
+      s.systemId === 'robot'
+        ? {
+            teachingMode: mode,
+            exploded: 0,
+            xray: false,
+            isolated: false,
+            selectedId: null,
+          }
+        : {},
+    ),
+  setLineState: (lineState) =>
+    set((s) => (s.systemId === 'robot' ? { lineState } : {})),
   setSystem: (systemId) =>
     set((s) => ({
       systemId,
+      teachingMode: null,
+      lineState: 'forward',
       selectedId: null,
       exploded: 0,
       xray: false,
@@ -48,6 +71,7 @@ export const useAtlas = create<AtlasState>((set) => ({
       xray: false,
       selectedId: null,
       isolated: false,
+      teachingMode: null,
     }),
   toggleXray: () =>
     set((s) =>
@@ -61,6 +85,8 @@ export const useAtlas = create<AtlasState>((set) => ({
   toggleLearn: () => set((s) => ({ learn: !s.learn })),
   reset: () =>
     set((s) => ({
+      teachingMode: null,
+      lineState: 'forward',
       selectedId: null,
       exploded: 0,
       xray: false,

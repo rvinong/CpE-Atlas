@@ -1,11 +1,21 @@
-import { MousePointer2, Layers, Scan, Tags, RotateCcw } from 'lucide-react';
+import {
+  Activity,
+  Route,
+  MousePointer2,
+  Layers,
+  Scan,
+  Tags,
+  RotateCcw,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAtlas } from '@/lib/atlas/store';
 import { moduleInteraction } from '@/lib/atlas/interaction';
 export function AtlasToolbar() {
   const state = useAtlas();
   const capabilities = moduleInteraction[state.systemId];
-  const mode = state.xray ? 'xray' : state.exploded > 0 ? 'explode' : 'explore';
+  const mode =
+    state.teachingMode ??
+    (state.xray ? 'xray' : state.exploded > 0 ? 'explode' : 'explore');
   return (
     <div className="toolbar-area">
       {state.exploded > 0 && (
@@ -61,6 +71,32 @@ export function AtlasToolbar() {
           >
             <Scan size={16} />
             <span>X-Ray</span>
+          </Button>
+        )}
+        {capabilities.modes.includes('signal') && (
+          <Button
+            variant="ghost"
+            className={mode === 'signal' ? 'active' : ''}
+            aria-pressed={mode === 'signal'}
+            onClick={() =>
+              state.setTeachingMode(mode === 'signal' ? null : 'signal')
+            }
+          >
+            <Activity size={16} />
+            <span>Signal Flow</span>
+          </Button>
+        )}
+        {capabilities.modes.includes('line') && (
+          <Button
+            variant="ghost"
+            className={mode === 'line' ? 'active' : ''}
+            aria-pressed={mode === 'line'}
+            onClick={() =>
+              state.setTeachingMode(mode === 'line' ? null : 'line')
+            }
+          >
+            <Route size={16} />
+            <span>Line Mode</span>
           </Button>
         )}
         <span className="toolbar-divider" />

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Link from 'next/link';
+import { lineBehavior } from '@/lib/atlas/robot';
 import {
   ArrowUpRight,
   Crosshair,
@@ -40,10 +42,29 @@ export function InspectorPanel() {
         </Button>
       </div>
       <div className="inspector-scroll" key={part?.id ?? system.id}>
+        {system.id === 'robot' && state.teachingMode === 'line' && (
+          <section
+            className="inspector-section robot-decision"
+            aria-live="polite"
+          >
+            <h3>ARDUINO DECISION / {lineBehavior[state.lineState].label}</h3>
+            <p className="role-description">
+              {lineBehavior[state.lineState].decision}
+            </p>
+            <small>
+              Illustrative surface-state mapping; not an electrical HIGH/LOW pin
+              map.
+            </small>
+          </section>
+        )}
         {part ? (
           <>
             <div className="inspector-meta">
-              <span className="eyebrow">{part.category}</span>
+              <span className="eyebrow">
+                {part.subsystem
+                  ? `ROBOTICS / ${part.subsystem}`
+                  : part.category}
+              </span>
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -90,9 +111,44 @@ export function InspectorPanel() {
               </dl>
             </section>
             <section className="inspector-section">
-              <h3>ROLE IN SYSTEM</h3>
+              <h3>{part.subsystem ? 'ROLE IN ROBOT' : 'ROLE IN SYSTEM'}</h3>
               <p className="role-description">{part.lesson}</p>
             </section>
+            {part.inputs && (
+              <section className="inspector-section">
+                <h3>INPUTS / OUTPUTS</h3>
+                <dl>
+                  <div>
+                    <dt>Input</dt>
+                    <dd>{part.inputs}</dd>
+                  </div>
+                  <div>
+                    <dt>Output</dt>
+                    <dd>{part.outputs}</dd>
+                  </div>
+                </dl>
+              </section>
+            )}
+            {part.relatedSystem && (
+              <Link
+                className="robot-system-link"
+                href={`/atlas?system=${part.relatedSystem}`}
+                onClick={() => state.setSystem(part.relatedSystem!)}
+              >
+                Explore Arduino Uno <ArrowUpRight size={14} />
+              </Link>
+            )}
+            {part.subsystem === 'Sensing' && (
+              <section className="inspector-section">
+                <h3>REFLECTED INFRARED</h3>
+                <p className="role-description">
+                  White surface: more reflection returns to the receiver.
+                  <br />
+                  Black line: less reflection returns. Adjusting the threshold
+                  changes what counts as black.
+                </p>
+              </section>
+            )}
             <section className="inspector-section">
               <h3>
                 <Link2 size={12} />

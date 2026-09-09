@@ -19,6 +19,7 @@ import { isSystemId, systems } from '@/lib/atlas/systems';
 import type { SystemId } from '@/lib/atlas/types';
 import { AtlasSidebar } from './AtlasSidebar';
 import { InspectorPanel } from './InspectorPanel';
+import { RobotModePanel } from './RobotModePanel';
 import { AtlasToolbar } from './AtlasToolbar';
 const AtlasScene = lazy(() => import('@/components/three/AtlasScene'));
 export default function AtlasWorkspace() {
@@ -77,7 +78,7 @@ export default function AtlasWorkspace() {
   };
   return (
     <div
-      className={`atlas-app ${state.exploded > 0 ? 'catalog-view' : ''}`}
+      className={`atlas-app ${state.exploded > 0 ? 'catalog-view' : ''} ${state.teachingMode ? 'teaching-view' : ''}`}
       ref={root}
     >
       <AtlasSidebar
@@ -169,19 +170,24 @@ export default function AtlasWorkspace() {
                 Isolated view <X size={12} />
               </Button>
             )}
+            {state.systemId === 'robot' && <RobotModePanel />}
             <AtlasToolbar />
             <div className="viewport-foot">
               <span>
                 <MousePointer2 size={11} /> Drag to orbit <i /> Scroll to zoom
               </span>
               <span>
-                {state.isolated
-                  ? 'ISOLATED'
-                  : state.exploded > 0
-                    ? 'EXPLODED'
-                    : state.xray
-                      ? 'X-RAY'
-                      : 'EXPLORE'}{' '}
+                {state.teachingMode
+                  ? state.teachingMode === 'line'
+                    ? 'LINE MODE'
+                    : 'SIGNAL FLOW'
+                  : state.isolated
+                    ? 'ISOLATED'
+                    : state.exploded > 0
+                      ? 'EXPLODED'
+                      : state.xray
+                        ? 'X-RAY'
+                        : 'EXPLORE'}{' '}
                 <span className="status-dot" />
               </span>
             </div>

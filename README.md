@@ -111,3 +111,15 @@ Tests cover the actual geometry envelopes and perspective projection for all fou
 - Cooler: [ASUS ROG Ryujin III 360 ARGB](https://rog.asus.com/us/cooling/cpu-liquid-coolers/rog-ryujin/rog-ryujin-iii-360-argb/spec/), 89 × 91 × 101 mm pump and 399.5 × 120 × 30 mm radiator plus 25 mm fans. Pump, radiator and hoses separate into independent inspection groups. Additional case fans are illustrative accessories.
 
 Glass retains its base transparency during selection and X-Ray animation. Catalogue spacing now also reserves depth-dependent gaps to prevent the large case and glass panel from overlapping in perspective. Bounds tests include curved surfaces, tubes, silkscreen planes, and the actual E-ATX board dimensions. PCB mounting tests treat thermal covers/backplates as separate layers and allow the photographed USB connector's deliberate edge overhang. No browser visual review has been performed for this revision.
+
+### Robotics: Line Follower Robot
+
+The fifth system lives at `/atlas?system=robot`. It reuses the atlas store, part selection, fixed-size labels, camera controller, inspector, and measured exploded-view packing. `lib/atlas/robot.ts` owns component metadata, subsystem classifications, signal links, and the four-state behavior table. `RobotGeometry.tsx` supplies replaceable independent meshes and embeds the existing Uno geometry; no GLB or new dependencies are required.
+
+Signal Flow shows dashed data/control connections and solid motor-power connections with restrained moving pulses. Line Mode uses configurable surface observations (not electrical HIGH/LOW polarity): White/White = forward, Black/White = left, White/Black = right, Black/Black = stop. Turns stop the inside wheel. Wheels rotate in place; this is not a physics or autonomous navigation simulation. Reduced-motion preferences disable continuous wheel/pulse motion. Mode changes and Reset stop inactive animations.
+
+The chassis, shield, geared motors, sensors, battery, mounts, caster, and harness are illustrative kit geometry. The supplied YouTube reference could not be inspected because access was blocked; no reference-specific pin map, battery specification, or algorithm polarity is claimed. Dimensions and signal paths are educational, not assembly instructions or manufacturer CAD. The future asset boundary is `PartGeometry` plus stable `modelObjectName`/part IDs.
+
+Sources: [Arduino Uno Rev3 hardware](https://docs.arduino.cc/hardware/uno-rev3), [TI L293D datasheet](https://www.ti.com/lit/ds/symlink/l293.pdf). The driver's switching stage supplies motor current independently of Arduino I/O. Actual shield revision, motor stall current, supply, grounding, and logic interface must be checked for a physical build.
+
+Validation includes all original systems, robot component bounds, exploded framing at six aspect ratios, metadata links, steering truth table, teaching-mode exclusivity, and complete reset behavior. Browser visual/interaction review remains pending; these checks do not substitute for a WebGL browser review.

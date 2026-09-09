@@ -1,3 +1,4 @@
+import { RobotGeometry } from './RobotGeometry';
 import type { AtlasPart } from '@/lib/atlas/types';
 import { Block, Disc, Fan, Board } from './GeometryPrimitives';
 import { DesktopGeometry } from './DesktopGeometry';
@@ -5,6 +6,7 @@ import { ElectronicsGeometry } from './ElectronicsGeometry';
 import { CrosshairGeometry } from './CrosshairGeometry';
 import { ReferenceDesktopGeometry } from './ReferenceDesktopGeometry';
 export function PartGeometry({ part: p }: { part: AtlasPart }) {
+  if (p.referenceModel === 'robot') return <RobotGeometry part={p} />;
   if (p.referenceModel === 'custom-pc')
     return <ReferenceDesktopGeometry part={p} />;
   if (p.referenceModel === 'crosshair') return <CrosshairGeometry part={p} />;

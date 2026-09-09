@@ -1,6 +1,7 @@
 import {
   Box3,
   BoxGeometry,
+  SphereGeometry,
   CylinderGeometry,
   TorusGeometry,
   ExtrudeGeometry,
@@ -34,6 +35,7 @@ export function bounds(element, parent = new Matrix4(), box = new Box3()) {
   const matrix = parent.clone().multiply(local);
   const constructors = {
     boxGeometry: BoxGeometry,
+    sphereGeometry: SphereGeometry,
     cylinderGeometry: CylinderGeometry,
     torusGeometry: TorusGeometry,
     extrudeGeometry: ExtrudeGeometry,

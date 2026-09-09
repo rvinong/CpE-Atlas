@@ -5,6 +5,8 @@ import { useAtlas } from '@/lib/atlas/store';
 import { createDisplayLayout } from '@/lib/atlas/explosion';
 import { InteractivePart } from './InteractivePart';
 import { moduleInteraction } from '../../lib/atlas/interaction';
+import { lineBehavior } from '../../lib/atlas/robot';
+import { RobotTeaching } from './RobotTeaching';
 import { CameraController } from './CameraController';
 
 export function AtlasModel({
@@ -42,6 +44,17 @@ export function AtlasModel({
           <InteractivePart
             key={`${system.id}-${part.id}`}
             part={part}
+            motionSpeed={
+              system.id === 'robot' &&
+              state.teachingMode === 'line' &&
+              !state.isolated &&
+              !reducedMotion &&
+              part.id.endsWith('wheel')
+                ? lineBehavior[state.lineState].motors[
+                    part.id.startsWith('left') ? 0 : 1
+                  ] * 2
+                : 0
+            }
             selected={selectedId === part.id}
             dimmed={
               !!selectedId &&
@@ -65,6 +78,9 @@ export function AtlasModel({
           />
         ))}
       </group>
+      {system.id === 'robot' && !exploded && (
+        <RobotTeaching reducedMotion={reducedMotion} />
+      )}
       <CameraController
         system={system}
         selectedId={selectedId}

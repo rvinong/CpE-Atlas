@@ -25,6 +25,7 @@ import {
 
 export function InteractivePart({
   part,
+  motionSpeed = 0,
   selected,
   dimmed,
   hidden,
@@ -38,6 +39,7 @@ export function InteractivePart({
   progress,
 }: {
   part: AtlasPart;
+  motionSpeed?: number;
   selected: boolean;
   dimmed: boolean;
   hidden: boolean;
@@ -51,6 +53,7 @@ export function InteractivePart({
   progress?: RefObject<number>;
 }) {
   const group = useRef<Group>(null);
+  const motion = useRef<Group>(null);
   const materials = useRef<MaterialAppearance[]>([]);
   const [hovered, setHovered] = useState(false);
   const target = useRef(new Vector3());
@@ -119,6 +122,10 @@ export function InteractivePart({
       );
       animating ||= changing;
     }
+    if (motionSpeed && motion.current) {
+      motion.current.rotation.x += motionSpeed * Math.min(dt, 0.1);
+      animating = true;
+    }
     if (animating) invalidate();
   });
   const over = (event: ThreeEvent<PointerEvent>) => {
@@ -145,7 +152,9 @@ export function InteractivePart({
       }}
     >
       <group ref={geometry} rotation={part.rotation}>
-        <PartGeometry part={part} />
+        <group ref={motion}>
+          <PartGeometry part={part} />
+        </group>
       </group>
       {!preview && !hidden && (hovered || selected || labels) && (
         <ComponentLabel

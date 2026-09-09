@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import {
   Box,
+  Bot,
   Search,
   ChevronRight,
   Cpu,
@@ -17,6 +18,7 @@ import { useAtlas } from '@/lib/atlas/store';
 import type { SystemId } from '@/lib/atlas/types';
 
 const icons = {
+  robot: Bot,
   desktop: Box,
   motherboard: CircuitBoard,
   arduino: Cpu,
@@ -91,7 +93,12 @@ export function AtlasSidebar({
                   }}
                 >
                   <Icon size={16} />
-                  <span>{s.name}</span>
+                  <span>
+                    {s.id === 'robot' && (
+                      <small className="nav-group-label">Robotics</small>
+                    )}
+                    {s.name}
+                  </span>
                   {s.id === state.systemId && (
                     <span className="nav-active-dot" />
                   )}
