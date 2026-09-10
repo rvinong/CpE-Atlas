@@ -18,7 +18,7 @@ export function HomeProduct({ systemId = 'desktop' }: { systemId?: SystemId }) {
   }, []);
   return (
     <figure ref={host} aria-label={`Rotatable ${systemId} model. Drag horizontally to rotate; scroll vertically to continue.`} style={{ width: '100%', height: '100%', margin: 0, position: 'relative' }}>
-      {ready && visible && <Suspense fallback={<output className={styles.modelLoading}>Loading model…</output>}><AtlasPreview systemId={systemId} /></Suspense>}
+      {ready && visible && <Suspense fallback={<output className={styles.modelLoading}>Loading model...</output>}><AtlasPreview systemId={systemId} /></Suspense>}
     </figure>
   );
 }

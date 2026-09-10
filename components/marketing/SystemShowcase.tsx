@@ -8,7 +8,7 @@ import { HomeProduct } from './HomeProduct';
 
 const names = ['Desktop', 'Motherboard', 'Arduino', 'Rectifier', 'Robotics'];
 export function SystemShowcase() {
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0);
   const active = atlasSystems[activeIndex];
   return <div>
     <div className={styles.systemSelector} aria-label="CpE Atlas systems">{atlasSystems.map((system, index) => <button key={system.id} type="button" aria-pressed={activeIndex === index} aria-controls="active-system" onClick={() => setActiveIndex(index)}>{names[index]}</button>)}</div>

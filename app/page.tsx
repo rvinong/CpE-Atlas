@@ -9,7 +9,7 @@ export default function Home() {
   return <main className={styles.site} id="main-content" tabIndex={-1}>
     <SiteHeader />
     <section className={styles.hero}>
-      <p className={styles.eyebrow}>Computer Engineering · Reimagined</p>
+      <p className={styles.eyebrow}>Computer Engineering &middot; Reimagined</p>
       <h1>CpE ATLAS</h1>
       <h2>Explore Computer Engineering<br />from the inside out.</h2>
       <p className={styles.heroText}>Interactive 3D learning for hardware, electronics, and robotics.</p>
@@ -35,7 +35,7 @@ export default function Home() {
         <img src="/atlas-workspace.png" width={1440} height={900} loading="lazy" decoding="async" alt="The real CpE Atlas workspace with motherboard navigation, the selected CPU socket, technical inspector, and exploration controls." />
       </figure>
     </section>
-    <section className={styles.finalCta}><h2>Ready to explore?</h2><Link href="/atlas" className={styles.primaryAction}>Launch Atlas <ArrowRight size={16} /></Link><p>Explore Computer Engineering from the inside out.</p></section>
+    <section className={styles.finalCta}><p className={styles.desktopStatus}>Windows version &middot; Coming soon</p><h2>Ready to explore?</h2><Link href="/atlas" className={styles.primaryAction}>Launch Atlas <ArrowRight size={16} /></Link><p>Explore Computer Engineering from the inside out.</p></section>
     <SiteFooter />
   </main>;
 }
