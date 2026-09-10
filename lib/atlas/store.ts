@@ -8,7 +8,9 @@ interface AtlasState {
   exploded: number;
   xray: boolean;
   isolated: boolean;
-  labels: boolean;
+  labels: false | 'key' | 'all';
+  wires: boolean;
+  toggleWires: () => void;
   resetKey: number;
   learn: boolean;
   teachingMode: 'signal' | 'line' | null;
@@ -30,6 +32,7 @@ export const useAtlas = create<AtlasState>((set) => ({
   exploded: 0,
   xray: false,
   isolated: false,
+  wires: false,
   labels: false,
   resetKey: 0,
   learn: false,
@@ -59,6 +62,7 @@ export const useAtlas = create<AtlasState>((set) => ({
       xray: false,
       isolated: false,
       learn: false,
+      wires: false,
       labels: false,
       resetKey: s.resetKey + 1,
     })),
@@ -81,7 +85,16 @@ export const useAtlas = create<AtlasState>((set) => ({
     ),
   toggleIsolate: () =>
     set((s) => ({ isolated: !!s.selectedId && !s.isolated })),
-  toggleLabels: () => set((s) => ({ labels: !s.labels })),
+  toggleLabels: () =>
+    set((s) => ({
+      labels: !s.labels ? 'key' : s.labels === 'key' ? 'all' : false,
+    })),
+  toggleWires: () =>
+    set((s) =>
+      s.systemId === 'desktop'
+        ? { wires: !s.wires, exploded: 0, isolated: false }
+        : {},
+    ),
   toggleLearn: () => set((s) => ({ learn: !s.learn })),
   reset: () =>
     set((s) => ({
@@ -92,6 +105,7 @@ export const useAtlas = create<AtlasState>((set) => ({
       xray: false,
       isolated: false,
       learn: false,
+      wires: false,
       labels: false,
       resetKey: s.resetKey + 1,
     })),

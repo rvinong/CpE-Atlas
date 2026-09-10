@@ -1,3 +1,4 @@
+import { desktopWires } from '@/lib/atlas/desktop-wires';
 import { useState } from 'react';
 import Link from 'next/link';
 import { lineBehavior } from '@/lib/atlas/robot';
@@ -55,6 +56,36 @@ export function InspectorPanel() {
               Illustrative surface-state mapping; not an electrical HIGH/LOW pin
               map.
             </small>
+          </section>
+        )}
+        {system.id === 'desktop' && state.wires && (
+          <section className="inspector-section">
+            <h3>POWER CABLES</h3>
+            <p className="role-description">
+              Illustrative cable routes. Select an endpoint to highlight its
+              connections.{' '}
+              {state.exploded > 0
+                ? 'Cables are disconnected in exploded view.'
+                : 'Use X-Ray to see routes behind the board.'}
+            </p>
+            {desktopWires
+              .filter(
+                (wire) => !part || wire.from === part.id || wire.to === part.id,
+              )
+              .map((wire) => (
+                <div key={wire.id}>
+                  <Button variant="ghost" onClick={() => state.select(wire.to)}>
+                    {wire.name}
+                  </Button>
+                  <p className="role-description">{wire.description}</p>
+                </div>
+              ))}
+            <p className="role-description">
+              RAM and the M.2 SSD connect directly to the motherboard; they do
+              not need separate PSU cables. The existing AIO tubes carry
+              coolant, not electricity. Fan, pump, lighting and front-panel
+              wiring are not shown yet.
+            </p>
           </section>
         )}
         {part ? (

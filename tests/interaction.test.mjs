@@ -52,3 +52,32 @@ test('Explode and X-Ray cannot remain active together', () => {
   useAtlas.getState().setExploded(NaN);
   assert.equal(useAtlas.getState().exploded, 0);
 });
+
+test('Label cycle exposes all names and reset restores a clean view', () => {
+  const state = () => useAtlas.getState();
+  state().reset();
+  state().toggleLabels();
+  assert.equal(state().labels, 'key');
+  state().toggleLabels();
+  assert.equal(state().labels, 'all');
+  state().select('cpu');
+  assert.equal(state().labels, 'all');
+  state().toggleLabels();
+  assert.equal(state().labels, false);
+});
+
+test('Desktop wiring opens assembled, is desktop-only, and clears on system change', () => {
+  const state = () => useAtlas.getState();
+  state().setSystem('desktop');
+  state().setExploded(1);
+  state().toggleWires();
+  assert.equal(state().wires, true);
+  assert.equal(state().exploded, 0);
+  state().reset();
+  assert.equal(state().wires, false);
+  state().toggleWires();
+  state().setSystem('arduino');
+  assert.equal(state().wires, false);
+  state().toggleWires();
+  assert.equal(state().wires, false);
+});

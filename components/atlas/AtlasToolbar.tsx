@@ -99,16 +99,27 @@ export function AtlasToolbar() {
             <span>Line Mode</span>
           </Button>
         )}
+        {state.systemId === 'desktop' && (
+          <Button
+            variant="ghost"
+            className={state.wires ? 'active' : ''}
+            aria-pressed={state.wires}
+            onClick={state.toggleWires}
+          >
+            <Route size={16} />
+            <span>Wires</span>
+          </Button>
+        )}
         <span className="toolbar-divider" />
         <Button
           variant="ghost"
           className={state.labels ? 'active' : ''}
-          aria-pressed={state.labels}
+          aria-pressed={!!state.labels}
           onClick={state.toggleLabels}
-          title="Show key component labels; hover or select any other part"
+          title="Cycle labels: Off, Key, All. Explode for a clearer view of all names."
         >
           <Tags size={16} />
-          <span>Labels</span>
+          <span>Labels: {state.labels || 'off'}</span>
         </Button>
         <Button
           variant="ghost"

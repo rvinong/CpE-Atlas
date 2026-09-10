@@ -1,3 +1,4 @@
+import { DesktopWires } from './DesktopWires';
 import { useMemo, useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { systems } from '@/lib/atlas/systems';
@@ -66,9 +67,9 @@ export function AtlasModel({
             xray={preview || state.xray}
             labels={
               !preview &&
-              state.labels &&
-              !selectedId &&
-              moduleInteraction[system.id].labels.includes(part.id)
+              !!state.labels &&
+              (state.labels === 'all' ||
+                moduleInteraction[system.id].labels.includes(part.id))
             }
             onSelect={state.select}
             reducedMotion={reducedMotion}
@@ -78,6 +79,11 @@ export function AtlasModel({
           />
         ))}
       </group>
+      {!preview &&
+        system.id === 'desktop' &&
+        state.wires &&
+        !exploded &&
+        !state.isolated && <DesktopWires />}
       {system.id === 'robot' && !exploded && (
         <RobotTeaching reducedMotion={reducedMotion} />
       )}

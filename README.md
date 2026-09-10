@@ -95,7 +95,7 @@ The motherboard includes four DIMM sockets, socket contacts and retention lever,
 
 Tests cover the actual geometry envelopes and perspective projection for all four systems, plus PCB mounting clearances and continuous assembly/explosion endpoints. PCB copper routing is illustrative, and the models remain educational rather than circuit fabrication files.
 
-## Supplied hardware references
+## Supplied hardware references                     
 
 `reference-hardware.ts` applies the current product selection after the original generic registry. `ReferenceDesktopGeometry` and `CrosshairGeometry` implement the reference-specific geometry. The prior desktop geometry remains available as a fallback, but the current desktop dispatch uses the reference implementation. Printed silkscreen and component names use locally generated canvas textures; no remote fonts or images are required at runtime.
 
@@ -123,3 +123,4 @@ The chassis, shield, geared motors, sensors, battery, mounts, caster, and harnes
 Sources: [Arduino Uno Rev3 hardware](https://docs.arduino.cc/hardware/uno-rev3), [TI L293D datasheet](https://www.ti.com/lit/ds/symlink/l293.pdf). The driver's switching stage supplies motor current independently of Arduino I/O. Actual shield revision, motor stall current, supply, grounding, and logic interface must be checked for a physical build.
 
 Validation includes all original systems, robot component bounds, exploded framing at six aspect ratios, metadata links, steering truth table, teaching-mode exclusivity, and complete reset behavior. Browser visual/interaction review remains pending; these checks do not substitute for a WebGL browser review.
+  
