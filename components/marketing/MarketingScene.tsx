@@ -11,12 +11,14 @@ import type { SystemId } from '@/lib/atlas/types';
 import { PartGeometry } from '@/components/three/PartGeometry';
 import { StudioLighting } from '@/components/three/StudioLighting';
 import styles from './marketing.module.css';
+import { useReducedMotion } from '@/hooks/use-browser-preferences';
 
 function ModelStage({ systemId, onDragging }: { systemId: SystemId; onDragging: (value: boolean) => void }) {
   const model = useRef<Group>(null);
   const controls = useRef<Controls>(null);
   const { camera, size, gl, invalidate } = useThree();
   const system = systems[systemId];
+  const reducedMotion = useReducedMotion();
   useEffect(() => {
     gl.domElement.style.touchAction = 'pan-y';
   }, [gl]);
@@ -44,7 +46,7 @@ function ModelStage({ systemId, onDragging }: { systemId: SystemId; onDragging: 
   return <>
     <group ref={model}>{system.parts.map(part => <group key={part.id} position={part.position} rotation={part.rotation}><PartGeometry part={part} /></group>)}</group>
     <OrbitControls ref={controls} makeDefault enableRotate enableZoom={false} enablePan={false}
-      enableDamping dampingFactor={0.09} rotateSpeed={0.45} autoRotate={false}
+      enableDamping={!reducedMotion} dampingFactor={0.09} rotateSpeed={0.45} autoRotate={false}
       minPolarAngle={Math.PI * 0.15} maxPolarAngle={Math.PI * 0.75}
       mouseButtons={{ LEFT: MOUSE.ROTATE }} touches={{ ONE: TOUCH.ROTATE }}
       onStart={() => onDragging(true)} onEnd={() => onDragging(false)} />
@@ -56,10 +58,10 @@ export default function MarketingScene({ systemId }: { systemId: SystemId }) {
   return <div className={styles.marketingStage} style={{ width: '100%', height: '100%', cursor: dragging ? 'grabbing' : 'grab' }}>
     <Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ fov: 38 }} gl={{ alpha: true, antialias: true }}
       fallback={<p>3D preview is unavailable. Launch Atlas to explore the component information.</p>}>
-      <StudioLighting /><ambientLight intensity={0.6} />
-      <hemisphereLight args={['#d5e0eb', '#333037', 0.8]} />
-      <directionalLight position={[4, 7, 6]} intensity={2.8} />
-      <directionalLight position={[-5, 2, -3]} intensity={1.8} color="#b8cce0" />
+      <StudioLighting /><ambientLight intensity={0.2} />
+      <hemisphereLight args={['#d5e0eb', '#171920', 0.45]} />
+      <directionalLight position={[4, 7, 6]} intensity={1.6} />
+      <directionalLight position={[-5, 2, -3]} intensity={1.5} color="#b8cce0" />
       <ModelStage key={systemId} systemId={systemId} onDragging={setDragging} />
     </Canvas>
   </div>;

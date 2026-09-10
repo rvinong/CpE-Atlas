@@ -3,6 +3,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useBrowserReady } from '@/hooks/use-browser-preferences';
 import type { SystemId } from '@/lib/atlas/types';
+import styles from './marketing.module.css';
 
 const AtlasPreview = lazy(() => import('./MarketingScene'));
 
@@ -17,7 +18,7 @@ export function HomeProduct({ systemId = 'desktop' }: { systemId?: SystemId }) {
   }, []);
   return (
     <figure ref={host} aria-label={`Rotatable ${systemId} model. Drag horizontally to rotate; scroll vertically to continue.`} style={{ width: '100%', height: '100%', margin: 0, position: 'relative' }}>
-      {ready && visible && <Suspense fallback={<output>Loading model…</output>}><AtlasPreview systemId={systemId} /></Suspense>}
+      {ready && visible && <Suspense fallback={<output className={styles.modelLoading}>Loading model…</output>}><AtlasPreview systemId={systemId} /></Suspense>}
     </figure>
   );
 }
