@@ -4,6 +4,7 @@ import { desktopWires } from '@/lib/atlas/desktop-wires';
 import { useAtlas } from '@/lib/atlas/store';
 
 export function DesktopWires() {
+  const xray = useAtlas((s) => s.xray);
   const selected = useAtlas((s) => s.selectedId);
   const select = useAtlas((s) => s.select);
   const curves = useMemo(
@@ -21,6 +22,7 @@ export function DesktopWires() {
         return (
           <mesh
             key={wire.id}
+            renderOrder={xray ? 10 : 0}
             onClick={(event) => {
               event.stopPropagation();
               select(wire.to);
@@ -30,6 +32,9 @@ export function DesktopWires() {
             <meshStandardMaterial
               color={active ? '#5b8cff' : '#73879e'}
               roughness={0.8}
+              transparent={xray}
+              depthTest={!xray}
+              depthWrite={!xray}
             />
           </mesh>
         );

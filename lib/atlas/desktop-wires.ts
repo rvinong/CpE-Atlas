@@ -11,7 +11,7 @@ export const desktopWires: {
 }[] = [
   {
     id: 'atx',
-    name: '24-pin ATX ? board power',
+    name: '24-pin ATX / board power',
     from: 'psu',
     to: 'motherboard',
     description:
@@ -25,7 +25,7 @@ export const desktopWires: {
   },
   {
     id: 'eps',
-    name: 'EPS ? CPU power',
+    name: 'EPS / CPU power',
     from: 'psu',
     to: 'motherboard',
     description:
@@ -40,7 +40,7 @@ export const desktopWires: {
   },
   {
     id: 'gpu',
-    name: 'GPU ? auxiliary power',
+    name: 'GPU / auxiliary power',
     from: 'psu',
     to: 'gpu',
     description:
