@@ -1,3 +1,6 @@
+import { connectionsFor } from '@/lib/atlas/connections';
+import { lessons } from '@/lib/atlas/learning';
+import { LearnMode } from './LearnMode';
 import { desktopWires } from '@/lib/atlas/desktop-wires';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -25,7 +28,7 @@ export function InspectorPanel() {
   const [expanded, setExpanded] = useState(false);
   return (
     <aside
-      className={`inspector ${part ? 'has-selection' : ''} ${expanded ? 'expanded' : ''}`}
+      className={`inspector ${part ? 'has-selection' : ''} ${expanded || state.lessonId ? 'expanded' : ''}`}
       aria-label="Component inspector"
     >
       <div className="inspector-heading">
@@ -42,7 +45,11 @@ export function InspectorPanel() {
           <ChevronUp size={15} />
         </Button>
       </div>
-      <div className="inspector-scroll" key={part?.id ?? system.id}>
+      <div
+        className="inspector-scroll"
+        key={state.lessonId ?? part?.id ?? system.id}
+      >
+        <LearnMode />
         {system.id === 'robot' && state.teachingMode === 'line' && (
           <section
             className="inspector-section robot-decision"
@@ -130,6 +137,50 @@ export function InspectorPanel() {
               {state.isolated ? 'Show complete system' : 'Isolate component'}
               <ArrowUpRight size={14} />
             </Button>
+            <div className="component-actions">
+              <Button variant="outline" onClick={state.focus}>
+                Focus
+              </Button>
+              {connectionsFor(system.id, part.id).length > 0 && (
+                <Button
+                  variant="outline"
+                  aria-pressed={state.connectionsVisible}
+                  onClick={state.toggleConnections}
+                >
+                  {state.connectionsVisible
+                    ? 'Hide connections'
+                    : 'Show connections'}
+                </Button>
+              )}
+            </div>
+            {connectionsFor(system.id, part.id).length > 0 && (
+              <section className="inspector-section">
+                <h3>CONNECTIONS</h3>
+                <p className="role-description">
+                  Conceptual relationships, not a pin-level wiring diagram.
+                  Solid: power. Dashed: other relationships.
+                </p>
+                <div className="related-list">
+                  {connectionsFor(system.id, part.id).map((link) => {
+                    const target = link.from === part.id ? link.to : link.from;
+                    return (
+                      <button
+                        key={link.id}
+                        onClick={() => state.select(target)}
+                      >
+                        <span>
+                          {system.parts.find((p) => p.id === target)?.name}
+                          <small>
+                            {link.kind} / {link.label}
+                          </small>
+                        </span>
+                        <ArrowUpRight size={12} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
             <section className="inspector-section">
               <h3>SPECIFICATIONS</h3>
               <dl>
@@ -217,6 +268,18 @@ export function InspectorPanel() {
             <p className="inspector-description">
               {moduleInteraction[system.id].purpose}
             </p>
+            {lessons
+              .filter((lesson) => lesson.system === system.id)
+              .map((lesson) => (
+                <Button
+                  key={lesson.id}
+                  variant="outline"
+                  className="start-exploring"
+                  onClick={() => state.startLesson(lesson.id)}
+                >
+                  Start guided lesson <ArrowRight size={15} />
+                </Button>
+              ))}
             <section className="inspector-section getting-started">
               <h3>A CLOSER LOOK</h3>
               <div>
@@ -258,15 +321,6 @@ export function InspectorPanel() {
             >
               Inspect a component <ArrowRight size={15} />
             </Button>
-            {state.learn && (
-              <section className="lesson-content">
-                <span className="eyebrow">FIELD NOTES</span>
-                <p>
-                  Select any component to open its explanation, specifications,
-                  and related parts.
-                </p>
-              </section>
-            )}
           </>
         )}
         <p className="model-disclaimer">

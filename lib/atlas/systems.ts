@@ -801,9 +801,9 @@ export const systems: Record<SystemId, AtlasSystem> = {
       'Explore the MSI Maestro build with an RTX 5090 Founders Edition, Maximus Z890 Extreme, and Intel Core Ultra 9 285K. Select a part to inspect its model and specifications.',
     features: { xray: true, signal: false, pins: false },
     connections: [
-      { from: 'cpu', to: 'ram', kind: 'data' },
-      { from: 'motherboard', to: 'gpu', kind: 'data' },
-      { from: 'psu', to: 'gpu', kind: 'power' },
+      { from: 'cpu', to: 'ram', kind: 'data', label: 'Memory interface' },
+      { from: 'motherboard', to: 'gpu', kind: 'data', label: 'PCIe slot' },
+      { from: 'psu', to: 'gpu', kind: 'power', label: 'Auxiliary GPU supply' },
     ],
   },
   motherboard: {
@@ -818,8 +818,8 @@ export const systems: Record<SystemId, AtlasSystem> = {
       'Explore the ASUS ROG Crosshair X870E Edition 20, following the supplied black-and-gold reference. Separate the copper heatsink and thermal covers to reveal the AM5 board beneath.',
     features: { xray: false, signal: false, pins: false },
     connections: [
-      { from: 'socket', to: 'dimm', kind: 'data' },
-      { from: 'atx-power', to: 'vrm', kind: 'power' },
+      { from: 'socket', to: 'dimm', kind: 'data', label: 'Memory channels' },
+      { from: 'cpu-power', to: 'vrm', kind: 'power', label: 'CPU power input' },
     ],
   },
   arduino: {
@@ -834,8 +834,18 @@ export const systems: Record<SystemId, AtlasSystem> = {
       'Inspect an Uno R3-inspired board and learn how its controller, programming interface, power, and I/O work together. Pin groups are selectable; individual pin mode is coming later.',
     features: { xray: false, signal: false, pins: false },
     connections: [
-      { from: 'atmega', to: 'digital', kind: 'signal' },
-      { from: 'atmega', to: 'analog', kind: 'signal' },
+      {
+        from: 'atmega',
+        to: 'digital',
+        kind: 'signal',
+        label: 'Digital input / output',
+      },
+      {
+        from: 'atmega',
+        to: 'analog',
+        kind: 'signal',
+        label: 'Analog input sampling',
+      },
     ],
   },
   rectifier: {

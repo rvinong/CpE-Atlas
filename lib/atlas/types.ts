@@ -32,6 +32,8 @@ export interface AtlasPart {
   id: string;
   name: string;
   fullName: string;
+  aliases?: string[];
+  searchKeywords?: string[];
   category: string;
   description: string;
   specifications: Record<string, string>;
@@ -80,6 +82,7 @@ export interface AtlasSystem {
     from: string;
     to: string;
     kind: 'data' | 'power' | 'signal';
+    label?: string;
   }[];
   modelAsset?: string;
 }

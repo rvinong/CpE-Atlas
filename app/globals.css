@@ -2294,3 +2294,149 @@ footer > span:last-child {
 .power-key:before {
   border-top: 3px solid #b7a081;
 }
+
+/* Atlas learning workspace: scoped additions; marketing remains unchanged. */
+.atlas-search-dialog {
+  width: min(600px, calc(100vw - 32px));
+  max-height: 82dvh;
+  padding: 20px;
+  margin: auto;
+  background: #181e26;
+  color: #e7edf6;
+  border: 1px solid #394350;
+  border-radius: 12px;
+  box-shadow: 0 24px 80px #0008;
+}
+.atlas-search-dialog::backdrop {
+  background: #05080d99;
+}
+.search-heading,
+.lesson-heading,
+.lesson-actions,
+.component-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.search-heading {
+  margin-bottom: 14px;
+}
+.search-heading button {
+  padding: 5px 10px;
+  border: 1px solid #566171;
+  border-radius: 5px;
+}
+.atlas-search-dialog input {
+  width: 100%;
+  background: #10161e;
+  border: 1px solid #60718b;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+}
+.search-results {
+  max-height: 52dvh;
+  overflow-y: auto;
+  margin: 12px 0;
+}
+.search-results [role='option'] {
+  padding: 11px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.search-results [aria-selected='true'] {
+  background: #253d5d;
+  box-shadow: inset 3px 0 #78a5f0;
+}
+.search-results [role='option']:hover {
+  background: #293544;
+}
+.search-results strong,
+.search-results small,
+.related-list small {
+  display: block;
+}
+.search-results small,
+.search-hint {
+  color: #abb9cb;
+  font-size: 12px;
+}
+.guided-lesson {
+  padding-bottom: 22px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #394350;
+}
+.guided-lesson h3 {
+  font-size: 19px;
+  line-height: 1.4;
+  margin: 12px 0;
+}
+.guided-lesson h4 {
+  font-size: 17px;
+  margin: 10px 0;
+}
+.guided-lesson p {
+  font-size: 14px;
+  color: #bac7d7;
+  line-height: 1.65;
+}
+.guided-lesson small {
+  display: block;
+  color: #a4b3c7;
+  font-size: 12px;
+}
+.guided-lesson progress {
+  width: 100%;
+  height: 5px;
+  accent-color: #79a5ed;
+  margin: 18px 0;
+}
+.component-actions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: 12px 0;
+}
+.related-list small {
+  color: #a4b3c7;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.atlas-app button:focus-visible,
+.atlas-search-dialog input:focus-visible {
+  outline: 2px solid #8ab5ff;
+  outline-offset: 3px;
+}
+.atlas-toolbar {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.atlas-toolbar button {
+  flex-shrink: 0;
+}
+@media (max-width: 700px) {
+  .atlas-header .live-indicator {
+    display: none;
+  }
+  .atlas-search-dialog {
+    padding: 14px;
+  }
+  .atlas-toolbar {
+    max-width: 100%;
+  }
+  .guided-lesson .lesson-actions button {
+    min-height: 40px;
+  }
+}
+
+.guided-lesson progress::-webkit-progress-bar {
+  background: #35404e;
+  border-radius: 3px;
+}
+.guided-lesson progress::-webkit-progress-value {
+  background: #79a5ed;
+  border-radius: 3px;
+}
+.guided-lesson progress::-moz-progress-bar {
+  background: #79a5ed;
+}

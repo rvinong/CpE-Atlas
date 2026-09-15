@@ -48,7 +48,7 @@ test('Moving between systems clears selection and viewing modes from the previou
     useAtlas.getState().toggleIsolate();
     useAtlas.getState().setExploded(1);
     useAtlas.getState().toggleXray();
-    useAtlas.getState().toggleLearn();
+    useAtlas.getState().startLesson('desktop-basics');
     useAtlas.getState().setSystem(id);
     const state = useAtlas.getState();
     assert.equal(state.systemId, id);
@@ -56,7 +56,7 @@ test('Moving between systems clears selection and viewing modes from the previou
     assert.equal(state.isolated, false);
     assert.equal(state.exploded, 0);
     assert.equal(state.xray, false);
-    assert.equal(state.learn, false);
+    assert.equal(state.lessonId, null);
   }
 });
 test('Related selection exits isolation and reset restores the full assembled view', () => {

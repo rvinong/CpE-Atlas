@@ -1,5 +1,7 @@
 'use client';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { CommandPalette } from './CommandPalette';
+import { atlasCommands, isTypingTarget } from '@/lib/atlas/commands';
 import Link from 'next/link';
 import {
   ChevronRight,
@@ -28,32 +30,56 @@ export default function AtlasWorkspace() {
   const [navOpen, setNavOpen] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [notice, setNotice] = useState('');
+  const palette = useRef<HTMLDialogElement>(null);
   const help = useRef<HTMLDialogElement>(null);
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const sync = () => {
       const value = new URLSearchParams(window.location.search).get('system');
-      useAtlas.getState().setSystem(isSystemId(value) ? value : 'desktop');
+      const id = isSystemId(value) ? value : 'desktop';
+      useAtlas.getState().setSystem(id);
+      const part = new URLSearchParams(window.location.search).get('component');
+      if (part && systems[id].parts.some((p) => p.id === part))
+        useAtlas.getState().select(part);
     };
     sync();
     window.addEventListener('popstate', sync);
     const full = () => setFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', full);
     const keys = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (!document.querySelector('dialog[open]')) {
+          palette.current?.showModal();
+          palette.current?.querySelector('input')?.focus();
+        }
+        return;
+      }
       if (
-        (e.target as HTMLElement).closest('input,textarea,select,dialog') ||
+        document.querySelector('dialog[open]') ||
+        isTypingTarget(e.target) ||
         e.ctrlKey ||
         e.metaKey ||
-        e.altKey
+        e.altKey ||
+        e.repeat
       )
         return;
       if (e.key === 'Escape') {
         const current = useAtlas.getState();
-        if (current.selectedId) current.select(null);
-        else current.reset();
+        if (current.lessonId) current.exitLesson();
+        else if (current.connectionsVisible) current.toggleConnections();
+        else if (current.isolated) current.toggleIsolate();
+        else if (current.selectedId) current.select(null);
         setNavOpen(false);
+      } else {
+        const command = atlasCommands().find(
+          (item) => item.key === e.key.toLowerCase(),
+        );
+        if (command) {
+          e.preventDefault();
+          command.run();
+        }
       }
-      if (e.key.toLowerCase() === 'r') useAtlas.getState().reset();
     };
     window.addEventListener('keydown', keys);
     return () => {
@@ -62,9 +88,28 @@ export default function AtlasWorkspace() {
       document.removeEventListener('fullscreenchange', full);
     };
   }, []);
-  const changeSystem = (id: SystemId) => {
-    state.setSystem(id);
-    window.history.pushState({}, '', `/atlas?system=${id}`);
+  useEffect(() => {
+    const current = useAtlas.getState();
+    // Initial query hydration must win over the default first render.
+    if (
+      current.systemId !== state.systemId ||
+      current.selectedId !== state.selectedId
+    )
+      return;
+    const query = new URLSearchParams(window.location.search);
+    query.set('system', state.systemId);
+    if (state.selectedId) query.set('component', state.selectedId);
+    else query.delete('component');
+    window.history.replaceState({}, '', `/atlas?${query}`);
+  }, [state.systemId, state.selectedId]);
+  const changeSystem = (id: SystemId, part?: string, lesson?: string) => {
+    if (useAtlas.getState().systemId !== id) state.setSystem(id);
+    if (lesson) state.startLesson(lesson);
+    else state.select(part ?? null);
+    const query = new URLSearchParams({ system: id });
+    if (part) query.set('component', part);
+    window.history.pushState({}, '', `/atlas?${query}`);
+    setNavOpen(false);
   };
   const toggleFull = async () => {
     try {
@@ -105,6 +150,13 @@ export default function AtlasWorkspace() {
             <strong>{system.name}</strong>
           </div>
           <div className="header-meta">
+            <Button
+              variant="outline"
+              onClick={() => palette.current?.showModal()}
+              aria-label="Search CpE Atlas (Ctrl or Command K)"
+            >
+              Search <Command size={13} /> K
+            </Button>
             <span className="live-indicator">
               <span className="status-dot" /> INTERACTIVE 3D
             </span>
@@ -145,8 +197,8 @@ export default function AtlasWorkspace() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={state.reset}
-                title="Reset view (R)"
+                onClick={state.resetCamera}
+                title="Reset camera (R)"
                 aria-label="Reset view"
               >
                 <RotateCcw size={16} />
@@ -177,17 +229,21 @@ export default function AtlasWorkspace() {
                 <MousePointer2 size={11} /> Drag to orbit <i /> Scroll to zoom
               </span>
               <span>
-                {state.teachingMode
-                  ? state.teachingMode === 'line'
-                    ? 'LINE MODE'
-                    : 'SIGNAL FLOW'
-                  : state.isolated
-                    ? 'ISOLATED'
-                    : state.exploded > 0
-                      ? 'EXPLODED'
-                      : state.xray
-                        ? 'X-RAY'
-                        : 'EXPLORE'}{' '}
+                {state.lessonId
+                  ? 'LEARN'
+                  : state.connectionsVisible
+                    ? 'CONNECTIONS'
+                    : state.teachingMode
+                      ? state.teachingMode === 'line'
+                        ? 'LINE MODE'
+                        : 'SIGNAL FLOW'
+                      : state.isolated
+                        ? 'ISOLATED'
+                        : state.exploded > 0
+                          ? 'EXPLODED'
+                          : state.xray
+                            ? 'X-RAY'
+                            : 'EXPLORE'}{' '}
                 <span className="status-dot" />
               </span>
             </div>
@@ -216,6 +272,7 @@ export default function AtlasWorkspace() {
           </Button>
         </output>
       )}
+      <CommandPalette dialog={palette} navigate={changeSystem} />
       <dialog ref={help} className="help-dialog">
         <div className="help-heading">
           <span className="eyebrow">YOUR WORKSPACE</span>
@@ -251,13 +308,21 @@ export default function AtlasWorkspace() {
           <b>Tab + Enter</b>
         </div>
         <div className="help-row">
-          <RotateCcw size={18} />
-          <span>Reset the workspace</span>
-          <b>R</b>
+          <Command size={18} />
+          <span>Global search</span>
+          <b>Ctrl / Cmd + K</b>
         </div>
+        {atlasCommands()
+          .filter((command) => command.key)
+          .map((command) => (
+            <div className="help-row" key={command.id}>
+              <span>{command.name}</span>
+              <b>{command.key.toUpperCase()}</b>
+            </div>
+          ))}
         <div className="help-row">
           <X size={18} />
-          <span>Clear selection</span>
+          <span>Exit lesson / connections / selection</span>
           <b>Esc</b>
         </div>
         <Button className="help-done" onClick={() => help.current?.close()}>

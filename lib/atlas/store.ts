@@ -1,8 +1,19 @@
+import { lessons } from './learning';
+import { connections, connectionsFor } from './connections';
 import { create } from 'zustand';
 import type { SystemId } from './types';
 import { moduleInteraction } from './interaction';
 import type { LineState } from './robot';
 interface AtlasState {
+  connectionsVisible: boolean;
+  lessonId: string | null;
+  lessonStep: number;
+  toggleConnections: () => void;
+  focus: () => void;
+  resetCamera: () => void;
+  startLesson: (id: string) => void;
+  stepLesson: (index: number) => void;
+  exitLesson: () => void;
   systemId: SystemId;
   selectedId: string | null;
   exploded: number;
@@ -12,7 +23,6 @@ interface AtlasState {
   wires: boolean;
   toggleWires: () => void;
   resetKey: number;
-  learn: boolean;
   teachingMode: 'signal' | 'line' | null;
   lineState: LineState;
   setTeachingMode: (mode: 'signal' | 'line' | null) => void;
@@ -23,10 +33,85 @@ interface AtlasState {
   toggleXray: () => void;
   toggleIsolate: () => void;
   toggleLabels: () => void;
-  toggleLearn: () => void;
   reset: () => void;
 }
 export const useAtlas = create<AtlasState>((set) => ({
+  connectionsVisible: false,
+  lessonId: null,
+  lessonStep: 0,
+  focus: () =>
+    set((s) => ({ connectionsVisible: false, resetKey: s.resetKey + 1 })),
+  resetCamera: () =>
+    set((s) => ({
+      selectedId: null,
+      isolated: false,
+      connectionsVisible: false,
+      lessonId: null,
+      resetKey: s.resetKey + 1,
+    })),
+  toggleConnections: () =>
+    set((s) => {
+      if (s.connectionsVisible)
+        return { connectionsVisible: false, lessonId: null };
+      const selectedId =
+        s.selectedId ?? connections[s.systemId][0]?.from ?? null;
+      if (!connectionsFor(s.systemId, selectedId).length) return {};
+      return {
+        connectionsVisible: !s.connectionsVisible,
+        selectedId,
+        isolated: false,
+        exploded: 0,
+        teachingMode: null,
+        wires: false,
+        lessonId: null,
+      };
+    }),
+  startLesson: (id) => {
+    const lesson = lessons.find((item) => item.id === id);
+    if (!lesson) return;
+    const step = lesson.steps[0];
+    set((s) => ({
+      systemId: lesson.system,
+      lessonId: id,
+      lessonStep: 0,
+      lineState: 'forward',
+      selectedId: step.componentId,
+      connectionsVisible: !!step.connections,
+      teachingMode: step.action ?? null,
+      exploded: 0,
+      isolated: false,
+      xray: false,
+      wires: false,
+      labels: false,
+      resetKey: s.resetKey + 1,
+    }));
+  },
+  stepLesson: (index) =>
+    set((s) => {
+      const lesson = lessons.find((item) => item.id === s.lessonId);
+      const step = lesson?.steps[index];
+      if (!step) return {};
+      return {
+        lessonStep: index,
+        selectedId: step.componentId,
+        connectionsVisible: !!step.connections,
+        teachingMode: step.action ?? null,
+        isolated: false,
+        exploded: 0,
+        xray: false,
+        wires: false,
+        resetKey: s.resetKey + 1,
+      };
+    }),
+  exitLesson: () =>
+    set((s) => ({
+      lessonId: null,
+      selectedId: null,
+      connectionsVisible: false,
+      teachingMode: null,
+      isolated: false,
+      resetKey: s.resetKey + 1,
+    })),
   systemId: 'desktop',
   selectedId: null,
   exploded: 0,
@@ -35,13 +120,14 @@ export const useAtlas = create<AtlasState>((set) => ({
   wires: false,
   labels: false,
   resetKey: 0,
-  learn: false,
   teachingMode: null,
   lineState: 'forward',
   setTeachingMode: (mode) =>
     set((s) =>
       s.systemId === 'robot'
         ? {
+            lessonId: null,
+            connectionsVisible: false,
             teachingMode: mode,
             exploded: 0,
             xray: false,
@@ -55,18 +141,27 @@ export const useAtlas = create<AtlasState>((set) => ({
   setSystem: (systemId) =>
     set((s) => ({
       systemId,
+      lessonId: null,
+      connectionsVisible: false,
       teachingMode: null,
       lineState: 'forward',
       selectedId: null,
       exploded: 0,
       xray: false,
       isolated: false,
-      learn: false,
       wires: false,
       labels: false,
       resetKey: s.resetKey + 1,
     })),
-  select: (selectedId) => set({ selectedId, isolated: false, learn: false }),
+  select: (selectedId) =>
+    set((s) => ({
+      selectedId,
+      isolated: false,
+      lessonId: null,
+      connectionsVisible:
+        s.connectionsVisible && !!connectionsFor(s.systemId, selectedId).length,
+      teachingMode: s.lessonId ? null : s.teachingMode,
+    })),
   setExploded: (exploded) =>
     set({
       exploded: Number.isFinite(exploded)
@@ -75,16 +170,22 @@ export const useAtlas = create<AtlasState>((set) => ({
       xray: false,
       selectedId: null,
       isolated: false,
+      lessonId: null,
+      connectionsVisible: false,
       teachingMode: null,
     }),
   toggleXray: () =>
     set((s) =>
       moduleInteraction[s.systemId].modes.includes('xray')
-        ? { xray: !s.xray, exploded: 0, isolated: false }
+        ? { xray: !s.xray, exploded: 0, isolated: false, lessonId: null }
         : {},
     ),
   toggleIsolate: () =>
-    set((s) => ({ isolated: !!s.selectedId && !s.isolated })),
+    set((s) => ({
+      isolated: !!s.selectedId && !s.isolated,
+      connectionsVisible: false,
+      lessonId: null,
+    })),
   toggleLabels: () =>
     set((s) => ({
       labels: !s.labels ? 'key' : s.labels === 'key' ? 'all' : false,
@@ -92,19 +193,25 @@ export const useAtlas = create<AtlasState>((set) => ({
   toggleWires: () =>
     set((s) =>
       s.systemId === 'desktop'
-        ? { wires: !s.wires, exploded: 0, isolated: false }
+        ? {
+            wires: !s.wires,
+            exploded: 0,
+            isolated: false,
+            connectionsVisible: false,
+            lessonId: null,
+          }
         : {},
     ),
-  toggleLearn: () => set((s) => ({ learn: !s.learn })),
   reset: () =>
     set((s) => ({
+      lessonId: null,
+      connectionsVisible: false,
       teachingMode: null,
       lineState: 'forward',
       selectedId: null,
       exploded: 0,
       xray: false,
       isolated: false,
-      learn: false,
       wires: false,
       labels: false,
       resetKey: s.resetKey + 1,

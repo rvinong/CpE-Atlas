@@ -1,3 +1,5 @@
+import { ConnectionVisualizer } from './ConnectionVisualizer';
+import { connectionsFor } from '@/lib/atlas/connections';
 import { DesktopWires } from './DesktopWires';
 import { useMemo, useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
@@ -37,6 +39,9 @@ export function AtlasModel({
     if (Math.abs(exploded - progress.current) > 0.0001) invalidate();
   }, -2);
   const selectedId = preview ? null : state.selectedId;
+  const linked = state.connectionsVisible
+    ? connectionsFor(system.id, selectedId)
+    : [];
   const selectedPart = system.parts.find((p) => p.id === selectedId);
   return (
     <>
@@ -60,7 +65,10 @@ export function AtlasModel({
             dimmed={
               !!selectedId &&
               selectedId !== part.id &&
-              !selectedPart?.relatedComponents.includes(part.id)
+              !selectedPart?.relatedComponents.includes(part.id) &&
+              !linked.some(
+                (link) => link.from === part.id || link.to === part.id,
+              )
             }
             hidden={!preview && state.isolated && selectedId !== part.id}
             exploded={exploded}
@@ -87,9 +95,12 @@ export function AtlasModel({
       {system.id === 'robot' && !exploded && (
         <RobotTeaching reducedMotion={reducedMotion} />
       )}
+      {!preview && state.connectionsVisible && !state.isolated && !exploded && (
+        <ConnectionVisualizer progress={progress} />
+      )}
       <CameraController
         system={system}
-        selectedId={selectedId}
+        selectedId={state.connectionsVisible && !preview ? null : selectedId}
         exploded={exploded}
         resetKey={state.resetKey}
         reducedMotion={reducedMotion}

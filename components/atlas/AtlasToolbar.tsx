@@ -1,3 +1,5 @@
+import { lessons } from '@/lib/atlas/learning';
+import { connectionsFor, connections } from '@/lib/atlas/connections';
 import {
   Activity,
   Route,
@@ -41,8 +43,14 @@ export function AtlasToolbar() {
       <div className="atlas-toolbar" role="toolbar" aria-label="View modes">
         <Button
           variant="ghost"
-          className={mode === 'explore' ? 'active' : ''}
-          aria-pressed={mode === 'explore'}
+          className={
+            mode === 'explore' && !state.connectionsVisible && !state.lessonId
+              ? 'active'
+              : ''
+          }
+          aria-pressed={
+            mode === 'explore' && !state.connectionsVisible && !state.lessonId
+          }
           onClick={() => {
             state.select(null);
             state.setExploded(0);
@@ -110,6 +118,36 @@ export function AtlasToolbar() {
             <span>Wires</span>
           </Button>
         )}
+        {(state.selectedId
+          ? connectionsFor(state.systemId, state.selectedId).length > 0
+          : connections[state.systemId].length > 0) && (
+          <Button
+            variant="ghost"
+            className={state.connectionsVisible ? 'active' : ''}
+            aria-pressed={state.connectionsVisible}
+            onClick={state.toggleConnections}
+          >
+            <Route size={16} />
+            <span>Connections</span>
+          </Button>
+        )}
+        {lessons
+          .filter((lesson) => lesson.system === state.systemId)
+          .map((lesson) => (
+            <Button
+              key={lesson.id}
+              variant="ghost"
+              className={state.lessonId ? 'active' : ''}
+              aria-pressed={!!state.lessonId}
+              onClick={() =>
+                state.lessonId
+                  ? state.exitLesson()
+                  : state.startLesson(lesson.id)
+              }
+            >
+              <span>Learn</span>
+            </Button>
+          ))}
         <span className="toolbar-divider" />
         <Button
           variant="ghost"
